@@ -1,0 +1,86 @@
+ParameterSelection:
+  NewMatchPathValueDetector:
+    Variables:
+      PreFilter:
+        Static: {}
+      Select:
+        Stable:
+          how: by_occurrence
+          segment_threshs: [1.0, 0.165, 0.027, 0.005, 0.001]
+
+  NewMatchPathValueComboDetector:
+    Variables:
+      PreFilter:
+        Static: {}
+        Random: {}
+        Occurrence:
+          how: "less_than"
+          thresh: 0.005
+      Select:
+        Co-OccurrenceCombos:
+          min_co_occurrence: 0.1
+
+  CharsetDetector:
+    Variables:
+      PreFilter:
+        Static: {}
+      Select:
+        Stable:
+          how: by_charset
+          segment_threshs: [1.0, 0.36788, 0.13534, 0.04979, 0.01832, 0.00674, 0.00248, 0.00091, 0.00034, 0.00012]
+
+  EntropyDetector:
+    Variables:
+      PreFilter:
+        Static: {}
+      Select:
+        CharacterPairProbability:
+          mean_crit_thresh: 0.7
+    SpecificParams:
+      CharacterPairProbability:
+        parameter_name: prob_thresh
+        min: 0.0
+        max: 0.9
+        offset: -0.05
+
+  ValueRangeDetector:
+    Variables:
+      Select:
+        Stable:
+          how: by_valueRange
+          segment_threshs: [1.0, 0.36788, 0.13534, 0.04979, 0.01832, 0.00674, 0.00248, 0.00091, 0.00034, 0.00012]
+
+  EventFrequencyDetector:
+    Variables:
+      PreFilter:
+        Occurrence:
+          how: "less_than"
+          thresh: 5
+          rel: false
+      Select:
+        EventFrequency:
+          season_min_autocorrelation: 0
+          season_min_reps: 3
+          season_variation_coeff: 0.1
+          season_planB: null #e.g. 24h - 86400s
+          events_per_window: 0.25 # 0.5 for Apache, 0.25 for audit
+          unique_events_per_window: true
+          operation: "mean"
+    SpecificParams:
+      EventFrequencyParams: {}
+
+Optimization:
+  SampleSplit:
+    k: 3
+    detectors: [NewMatchPathValueDetector, NewMatchPathValueComboDetector, EntropyDetector, CharsetDetector, ValueRangeDetector, EventFrequencyDetector]
+    max_FP: 10
+    max_FP_per_minute: 0.05
+    weighted_split: true
+    fancy: true
+    thresh_optimization:
+      EntropyDetector:
+        name: prob_thresh
+        min: 0.0
+        max: 0.9
+        offset: -0.1
+
