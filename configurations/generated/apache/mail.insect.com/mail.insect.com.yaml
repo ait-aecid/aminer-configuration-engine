@@ -1,0 +1,245 @@
+LearnMode: true
+LogResourceList:
+- file:///home/viktor/projects/aminer-configuration-engine/output/NewMatchPathValueDetector_NewMatchPathValueComboDetector_CharsetDetector_EntropyDetector_ValueRangeDetector_EventFrequencyDetector/apache/mail.insect.com/ace_R1_S118549/data/train1.log
+Parser:
+-   id: START
+    start: true
+    type: ApacheAccessParsingModel
+    name: parser
+Input:
+    timestamp_paths:
+    - /model/time
+    - /model/@timestamp/time
+    - /model/with_df/time
+    - /model/type/execve/time
+    - /model/type/proctitle/time
+    - /model/type/syscall/time
+    - /model/type/path/time
+    - /model/type/login/time
+    - /model/type/sockaddr/time
+    - /model/type/unknown/time
+    - /model/type/cred_refr/time
+    - /model/type/user_start/time
+    - /model/type/user_acct/time
+    - /model/type/user_auth/time
+    - /model/type/user_login/time
+    - /model/type/cred_disp/time
+    - /model/type/service_start/time
+    - /model/type/service_stop/time
+    - /model/type/user_end/time
+    - /model/type/user_cmd/time
+    - /model/type/cred_acq/time
+    - /model/type/avc/time
+    - /model/type/user_bprm_fcaps/time
+    - /model/datetime
+Analysis:
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id0
+    persistence_id: id0_Stable
+    paths:
+    - /model/client_ip/localhost
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id2
+    persistence_id: id2_Stable
+    paths:
+    - /model/combined/combined/user_agent
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id3
+    persistence_id: id3_Stable
+    paths:
+    - /model/fm/request/method
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id4
+    persistence_id: id4_Stable
+    paths:
+    - /model/fm/request/sp5
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id5
+    persistence_id: id5_Stable
+    paths:
+    - /model/fm/request/sp6
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id6
+    persistence_id: id6_Stable
+    paths:
+    - /model/fm/request/version
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id7
+    persistence_id: id7_Stable
+    paths:
+    - /model/client_ip/client_ip
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id0
+    persistence_id: id0_Stable
+    paths:
+    - /model
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id1
+    persistence_id: id1_Stable
+    paths:
+    - /model/client_ip/localhost
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id2
+    persistence_id: id2_Stable
+    paths:
+    - /model/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id3
+    persistence_id: id3_Stable
+    paths:
+    - /model/fm/request
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id4
+    persistence_id: id4_Stable
+    paths:
+    - /model/status_code
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id5
+    persistence_id: id5_Stable
+    paths:
+    - /model/content_size
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id6
+    persistence_id: id6_Stable
+    paths:
+    - /model/combined
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id7
+    persistence_id: id7_Stable
+    paths:
+    - /model/combined/combined
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id8
+    persistence_id: id8_Stable
+    paths:
+    - /model/combined/combined/referer
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id9
+    persistence_id: id9_Stable
+    paths:
+    - /model/combined/combined/user_agent
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id10
+    persistence_id: id10_Stable
+    paths:
+    - /model/fm/request/method
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id11
+    persistence_id: id11_Stable
+    paths:
+    - /model/fm/request/sp5
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id12
+    persistence_id: id12_Stable
+    paths:
+    - /model/fm/request/request
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id13
+    persistence_id: id13_Stable
+    paths:
+    - /model/fm/request/sp6
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id14
+    persistence_id: id14_Stable
+    paths:
+    - /model/fm/request/version
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id15
+    persistence_id: id15_Stable
+    paths:
+    - /model/client_ip/client_ip
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id16
+    persistence_id: id16_Stable
+    paths:
+    - /model/fm/dash
+    output_logline: true
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id0
+    persistence_id: id0_CharacterPairProbability
+    paths:
+    - /model/client_ip/localhost
+    output_logline: true
+    prob_thresh: 0.7
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id1
+    persistence_id: id1_CharacterPairProbability
+    paths:
+    - /model/fm/request/method
+    output_logline: true
+    prob_thresh: 0.0
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id2
+    persistence_id: id2_CharacterPairProbability
+    paths:
+    - /model/fm/request/sp5
+    output_logline: true
+    prob_thresh: 0.9
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id3
+    persistence_id: id3_CharacterPairProbability
+    paths:
+    - /model/fm/request/sp6
+    output_logline: true
+    prob_thresh: 0.9
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id4
+    persistence_id: id4_CharacterPairProbability
+    paths:
+    - /model/fm/request/version
+    output_logline: true
+    prob_thresh: 0.627
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id5
+    persistence_id: id5_CharacterPairProbability
+    paths:
+    - /model/fm/dash
+    output_logline: true
+    prob_thresh: 0.9
+-   type: ValueRangeDetector
+    id: ValueRangeDetector_Stable_id0
+    persistence_id: id0_Stable
+    paths:
+    - /model/status_code
+    output_logline: true
+-   type: ValueRangeDetector
+    id: ValueRangeDetector_Stable_id1
+    persistence_id: id1_Stable
+    paths:
+    - /model/content_size
+    output_logline: true
+-   type: NewMatchPathDetector
+    id: NewMatchPathDetector
+    suppress: true
+-   type: VerboseUnparsedAtomHandler
+    id: VerboseUnparsedAtomHandler
+    suppress: true
+EventHandlers:
+-   id: stpefile
+    type: StreamPrinterEventHandler
+    json: true
+    pretty: false
+    output_file_path: /tmp/aminer_out.json

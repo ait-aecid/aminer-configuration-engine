@@ -1,0 +1,121 @@
+# This is a template for the "aminer" logdata-anomaly-miner tool. Copy
+# it to "config.yml" and define your ruleset. For more examples of component
+# usage see aecid-testsuite/demo/aminer/demo-config.yml.
+
+LearnMode: true # optional
+AminerUser: 'aminer'  # optional default: aminer
+AminerGroup: 'aminer' # optional default: aminer
+
+  # Core.LogDir: '/logs'
+
+LogResourceList:
+        - 'file:///logs/access.log'
+        - 'file:///logs/audit.log'
+
+Parser:
+        - id: 'apacheModel'
+          type: ApacheAccessParsingModel
+          name: 'apache'
+          args: 'apache'
+
+        - id: 'auditModel'
+          type: AuditdParsingModel
+          name: 'audit'
+          args: 'audit'
+
+
+        - id: 'startModel'
+          start: True
+          type: FirstMatchModelElement
+          name: 'parser'
+          args: 
+            - apacheModel
+            - auditModel
+
+Input:
+        multi_source: False # optional
+        timestamp_paths: "/parser/model/time"
+
+Analysis:
+        - type: "NewMatchPathValueDetector"
+          paths: ["/parser/model/fm/request/request"]
+          persistence_id: "accesslog_status"
+
+        - type: "NewMatchPathValueComboDetector"
+          paths: ["/parser/model/fm/request/request","/parser/model/fm/request/method", "/parser/model/status_code"]
+          persistence_id: "accesslog_request_status_method"
+
+        - type: "CharsetDetector"
+          paths: ["/parser/model/combined/combined/user_agent"]
+
+        - type: "EntropyDetector"
+          paths: ["/parser/model/fm/request/request"]
+          prob_thresh: 0.05
+          default_freqs: false
+          skip_repetitions: false
+
+        - type: 'ValueRangeDetector'
+          paths: ["/parser/model/content_size"]
+          id_path_list:
+            - "/parser/model/fm/request/request"
+            - "/parser/model/fm/request/method"
+            - "/parser/model/client_ip/client_ip"
+
+        - type: "NewMatchPathValueComboDetector"
+          paths:
+            - "/parser/model/client_ip/client_ip"
+            - "/parser/model/combined/combined/user_agent"
+            - "/parser/model/fm/request/request"
+            - "/parser/model/fm/request/method"
+
+        - type: "EventFrequencyDetector"
+          id: "accesslog_frequency"
+          paths:
+            - "/parser/model/fm/request/request"
+            - "/parser/model/fm/request/method"
+          window_size: 10
+
+        ############ BEGIN AUDIT ################
+
+        - type: "NewMatchPathValueDetector"
+          paths: ["/parser/model/type/cred_refr/opt/opt_seq/exe"]
+          persistence_id: "audit_exe" 
+
+        - type: "NewMatchPathValueComboDetector"
+          paths: ["/parser/model/type/cred_refr/uid","/parser/model/type/cred_refr/opt/opt_seq/exe"]
+          persistence_id: "audit_uid_exe_combo"
+
+        - type: "NewMatchPathValueComboDetector"
+          paths: ["/parser/model/type/cred_refr/pid","/parser/model/type/cred_refr/opt/opt_seq/exe"]
+          persistence_id: "audit_pid_exe_combo"
+
+        - type: "NewMatchPathValueComboDetector"
+          paths: ["/parser/model/type/user_cmd/uid","/parser/model/type/user_cmd/fm/cmd/cmd"]
+          persistence_id: "audit_uid_cmd_combo" 
+
+        - type: "NewMatchPathValueComboDetector"
+          paths: ["/parser/model/type/user_auth/uid", "/parser/model/type/user_auth/opt/opt_seq/exe"]
+          persistence_id: "audit_uid_auth_exe_combo" 
+
+        - type: "EventFrequencyDetector"
+          id: "audit_usercmd_frequency"
+          paths: ["/parser/model/type/user_cmd/uid","/parser/model/type/user_cmd/fm/cmd/cmd"]
+          window_size: 10
+
+        - type: "EventFrequencyDetector"
+          id: "audit_auth_requency"
+          paths: ["/parser/model/type/user_auth/uid", "/parser/model/type/user_auth/opt/opt_seq/exe"]
+          window_size: 10
+
+        - type: "EntropyDetector"
+          paths: ["/parser/model/type/user_cmd/fm/cmd"]
+          prob_thresh: 0.05
+          default_freqs: false
+          skip_repetitions: false
+
+        # CharsetDetector would make sense if user_cmd would ASCII instead of hex
+
+EventHandlers:
+        - id: "stpe"
+          json: true # optional default: false
+          type: "StreamPrinterEventHandler"

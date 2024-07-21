@@ -1,0 +1,295 @@
+LearnMode: true
+LogResourceList:
+- file:///home/viktor/projects/aminer-configuration-engine/output/NewMatchPathValueDetector_NewMatchPathValueComboDetector_CharsetDetector_EntropyDetector_EventFrequencyDetector/audit/shaw/ace_R1_S2608/data/train1.log
+Parser:
+-   id: START
+    start: true
+    type: AuditdParsingModel
+    name: parser
+Input:
+    timestamp_paths:
+    - /model/time
+    - /model/@timestamp/time
+    - /model/with_df/time
+    - /model/type/execve/time
+    - /model/type/proctitle/time
+    - /model/type/syscall/time
+    - /model/type/path/time
+    - /model/type/login/time
+    - /model/type/sockaddr/time
+    - /model/type/unknown/time
+    - /model/type/cred_refr/time
+    - /model/type/user_start/time
+    - /model/type/user_acct/time
+    - /model/type/user_auth/time
+    - /model/type/user_login/time
+    - /model/type/cred_disp/time
+    - /model/type/service_start/time
+    - /model/type/service_stop/time
+    - /model/type/user_end/time
+    - /model/type/user_cmd/time
+    - /model/type/cred_acq/time
+    - /model/type/avc/time
+    - /model/type/user_bprm_fcaps/time
+    - /model/datetime
+Analysis:
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id18
+    persistence_id: id18_Stable
+    paths:
+    - /model/type/service_start/msg2
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id19
+    persistence_id: id19_Stable
+    paths:
+    - /model/type/service_stop/msg2
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id0
+    persistence_id: id0_Stable
+    paths:
+    - /model
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id1
+    persistence_id: id1_Stable
+    paths:
+    - /model/type/user_acct
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id2
+    persistence_id: id2_Stable
+    paths:
+    - /model/type/user_acct/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id3
+    persistence_id: id3_Stable
+    paths:
+    - /model/type/user_acct/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id4
+    persistence_id: id4_Stable
+    paths:
+    - /model/type/user_acct/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id5
+    persistence_id: id5_Stable
+    paths:
+    - /model/type/cred_acq
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id6
+    persistence_id: id6_Stable
+    paths:
+    - /model/type/cred_acq/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id7
+    persistence_id: id7_Stable
+    paths:
+    - /model/type/cred_acq/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id8
+    persistence_id: id8_Stable
+    paths:
+    - /model/type/cred_acq/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id9
+    persistence_id: id9_Stable
+    paths:
+    - /model/type/login
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id10
+    persistence_id: id10_Stable
+    paths:
+    - /model/type/login/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id11
+    persistence_id: id11_Stable
+    paths:
+    - /model/type/login/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id12
+    persistence_id: id12_Stable
+    paths:
+    - /model/type/login/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id13
+    persistence_id: id13_Stable
+    paths:
+    - /model/type/login/ses
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id14
+    persistence_id: id14_Stable
+    paths:
+    - /model/type/user_start
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id15
+    persistence_id: id15_Stable
+    paths:
+    - /model/type/user_start/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id16
+    persistence_id: id16_Stable
+    paths:
+    - /model/type/user_start/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id17
+    persistence_id: id17_Stable
+    paths:
+    - /model/type/user_start/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id18
+    persistence_id: id18_Stable
+    paths:
+    - /model/type/user_start/ses
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id19
+    persistence_id: id19_Stable
+    paths:
+    - /model/type/cred_disp
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id20
+    persistence_id: id20_Stable
+    paths:
+    - /model/type/cred_disp/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id21
+    persistence_id: id21_Stable
+    paths:
+    - /model/type/cred_disp/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id22
+    persistence_id: id22_Stable
+    paths:
+    - /model/type/cred_disp/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id24
+    persistence_id: id24_Stable
+    paths:
+    - /model/type/cred_disp/ses
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id33
+    persistence_id: id33_Stable
+    paths:
+    - /model/type/user_end
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id34
+    persistence_id: id34_Stable
+    paths:
+    - /model/type/user_end/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id35
+    persistence_id: id35_Stable
+    paths:
+    - /model/type/user_end/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id36
+    persistence_id: id36_Stable
+    paths:
+    - /model/type/user_end/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id38
+    persistence_id: id38_Stable
+    paths:
+    - /model/type/user_end/ses
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id47
+    persistence_id: id47_Stable
+    paths:
+    - /model/type/service_start
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id48
+    persistence_id: id48_Stable
+    paths:
+    - /model/type/service_start/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id49
+    persistence_id: id49_Stable
+    paths:
+    - /model/type/service_start/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id50
+    persistence_id: id50_Stable
+    paths:
+    - /model/type/service_start/msg2
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id51
+    persistence_id: id51_Stable
+    paths:
+    - /model/type/service_stop
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id52
+    persistence_id: id52_Stable
+    paths:
+    - /model/type/service_stop/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id53
+    persistence_id: id53_Stable
+    paths:
+    - /model/type/service_stop/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id54
+    persistence_id: id54_Stable
+    paths:
+    - /model/type/service_stop/msg2
+    output_logline: true
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id4
+    persistence_id: id4_CharacterPairProbability
+    paths:
+    - /model/type/cred_disp/fm/acct/acct
+    output_logline: true
+    prob_thresh: 0.067
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id9
+    persistence_id: id9_CharacterPairProbability
+    paths:
+    - /model/type/user_end/fm/acct/acct
+    output_logline: true
+    prob_thresh: 0.067
+-   type: NewMatchPathDetector
+    id: NewMatchPathDetector
+    suppress: true
+-   type: VerboseUnparsedAtomHandler
+    id: VerboseUnparsedAtomHandler
+    suppress: true
+EventHandlers:
+-   id: stpefile
+    type: StreamPrinterEventHandler
+    json: true
+    pretty: false
+    output_file_path: /tmp/aminer_out.json

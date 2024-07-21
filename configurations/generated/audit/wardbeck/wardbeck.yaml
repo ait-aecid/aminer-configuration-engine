@@ -1,0 +1,1070 @@
+LearnMode: true
+LogResourceList:
+- file:///home/viktor/projects/aminer-configuration-engine/output/NewMatchPathValueDetector_NewMatchPathValueComboDetector_CharsetDetector_EntropyDetector_EventFrequencyDetector/audit/wardbeck/ace_R1_S2645/data/train1.log
+Parser:
+-   id: START
+    start: true
+    type: AuditdParsingModel
+    name: parser
+Input:
+    timestamp_paths:
+    - /model/time
+    - /model/@timestamp/time
+    - /model/with_df/time
+    - /model/type/execve/time
+    - /model/type/proctitle/time
+    - /model/type/syscall/time
+    - /model/type/path/time
+    - /model/type/login/time
+    - /model/type/sockaddr/time
+    - /model/type/unknown/time
+    - /model/type/cred_refr/time
+    - /model/type/user_start/time
+    - /model/type/user_acct/time
+    - /model/type/user_auth/time
+    - /model/type/user_login/time
+    - /model/type/cred_disp/time
+    - /model/type/service_start/time
+    - /model/type/service_stop/time
+    - /model/type/user_end/time
+    - /model/type/user_cmd/time
+    - /model/type/cred_acq/time
+    - /model/type/avc/time
+    - /model/type/user_bprm_fcaps/time
+    - /model/datetime
+Analysis:
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id0
+    persistence_id: id0_Stable
+    paths:
+    - /model/type/user_acct/opt
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id1
+    persistence_id: id1_Stable
+    paths:
+    - /model/type/user_acct/terminal
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id2
+    persistence_id: id2_Stable
+    paths:
+    - /model/type/user_acct/opt/opt_seq
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id3
+    persistence_id: id3_Stable
+    paths:
+    - /model/type/user_acct/opt/opt_seq/exe
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id4
+    persistence_id: id4_Stable
+    paths:
+    - /model/type/user_acct/opt/opt_seq/hostname
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id5
+    persistence_id: id5_Stable
+    paths:
+    - /model/type/user_acct/opt/opt_seq/addr
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id6
+    persistence_id: id6_Stable
+    paths:
+    - /model/type/cred_acq/opt
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id7
+    persistence_id: id7_Stable
+    paths:
+    - /model/type/cred_acq/terminal
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id8
+    persistence_id: id8_Stable
+    paths:
+    - /model/type/cred_acq/opt/opt_seq
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id9
+    persistence_id: id9_Stable
+    paths:
+    - /model/type/cred_acq/opt/opt_seq/exe
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id10
+    persistence_id: id10_Stable
+    paths:
+    - /model/type/cred_acq/opt/opt_seq/hostname
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id11
+    persistence_id: id11_Stable
+    paths:
+    - /model/type/cred_acq/opt/opt_seq/addr
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id12
+    persistence_id: id12_Stable
+    paths:
+    - /model/type/user_start/terminal
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id13
+    persistence_id: id13_Stable
+    paths:
+    - /model/type/user_start/opt/opt_seq/exe
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id14
+    persistence_id: id14_Stable
+    paths:
+    - /model/type/user_start/opt/opt_seq/hostname
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id15
+    persistence_id: id15_Stable
+    paths:
+    - /model/type/user_start/opt/opt_seq/addr
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id16
+    persistence_id: id16_Stable
+    paths:
+    - /model/type/cred_disp/terminal
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id17
+    persistence_id: id17_Stable
+    paths:
+    - /model/type/cred_disp/opt/opt_seq/exe
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id18
+    persistence_id: id18_Stable
+    paths:
+    - /model/type/cred_disp/opt/opt_seq/hostname
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id19
+    persistence_id: id19_Stable
+    paths:
+    - /model/type/cred_disp/opt/opt_seq/addr
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id20
+    persistence_id: id20_Stable
+    paths:
+    - /model/type/user_end/terminal
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id21
+    persistence_id: id21_Stable
+    paths:
+    - /model/type/user_end/opt/opt_seq/exe
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id22
+    persistence_id: id22_Stable
+    paths:
+    - /model/type/user_end/opt/opt_seq/hostname
+    output_logline: true
+-   type: NewMatchPathValueDetector
+    id: NewMatchPathValueDetector_Stable_id23
+    persistence_id: id23_Stable
+    paths:
+    - /model/type/user_end/opt/opt_seq/addr
+    output_logline: true
+-   type: NewMatchPathValueComboDetector
+    id: NewMatchPathValueComboDetector_Co-OccurrenceCombos_id0
+    persistence_id: id0_Co-OccurrenceCombos
+    paths:
+    - /model/type/user_acct/fm/acct
+    - /model/type/user_acct/fm/acct/acct
+    - /model/type/user_acct/opt
+    - /model/type/user_acct/opt/opt_seq
+    - /model/type/user_acct/opt/opt_seq/addr
+    - /model/type/user_acct/opt/opt_seq/exe
+    - /model/type/user_acct/opt/opt_seq/hostname
+    - /model/type/user_acct/terminal
+    output_logline: true
+-   type: NewMatchPathValueComboDetector
+    id: NewMatchPathValueComboDetector_Co-OccurrenceCombos_id1
+    persistence_id: id1_Co-OccurrenceCombos
+    paths:
+    - /model/type/user_start/auid
+    - /model/type/user_start/fm/acct
+    - /model/type/user_start/fm/acct/acct
+    - /model/type/user_start/opt
+    - /model/type/user_start/opt/opt_seq
+    - /model/type/user_start/opt/opt_seq/addr
+    - /model/type/user_start/opt/opt_seq/exe
+    - /model/type/user_start/opt/opt_seq/hostname
+    - /model/type/user_start/terminal
+    output_logline: true
+-   type: NewMatchPathValueComboDetector
+    id: NewMatchPathValueComboDetector_Co-OccurrenceCombos_id2
+    persistence_id: id2_Co-OccurrenceCombos
+    paths:
+    - /model/type/cred_acq/auid
+    - /model/type/cred_acq/fm/acct
+    - /model/type/cred_acq/fm/acct/acct
+    - /model/type/cred_acq/opt
+    - /model/type/cred_acq/opt/opt_seq
+    - /model/type/cred_acq/opt/opt_seq/addr
+    - /model/type/cred_acq/opt/opt_seq/exe
+    - /model/type/cred_acq/opt/opt_seq/hostname
+    - /model/type/cred_acq/terminal
+    output_logline: true
+-   type: NewMatchPathValueComboDetector
+    id: NewMatchPathValueComboDetector_Co-OccurrenceCombos_id3
+    persistence_id: id3_Co-OccurrenceCombos
+    paths:
+    - /model/type/user_end/auid
+    - /model/type/user_end/fm/acct
+    - /model/type/user_end/fm/acct/acct
+    - /model/type/user_end/opt
+    - /model/type/user_end/opt/opt_seq
+    - /model/type/user_end/opt/opt_seq/addr
+    - /model/type/user_end/opt/opt_seq/exe
+    - /model/type/user_end/opt/opt_seq/hostname
+    - /model/type/user_end/terminal
+    output_logline: true
+-   type: NewMatchPathValueComboDetector
+    id: NewMatchPathValueComboDetector_Co-OccurrenceCombos_id4
+    persistence_id: id4_Co-OccurrenceCombos
+    paths:
+    - /model/type/cred_disp/auid
+    - /model/type/cred_disp/fm/acct
+    - /model/type/cred_disp/fm/acct/acct
+    - /model/type/cred_disp/opt
+    - /model/type/cred_disp/opt/opt_seq
+    - /model/type/cred_disp/opt/opt_seq/addr
+    - /model/type/cred_disp/opt/opt_seq/exe
+    - /model/type/cred_disp/opt/opt_seq/hostname
+    - /model/type/cred_disp/terminal
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id1
+    persistence_id: id1_Stable
+    paths:
+    - /model/type/service_start
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id2
+    persistence_id: id2_Stable
+    paths:
+    - /model/type/service_start/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id3
+    persistence_id: id3_Stable
+    paths:
+    - /model/type/service_start/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id4
+    persistence_id: id4_Stable
+    paths:
+    - /model/type/service_start/msg2
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id5
+    persistence_id: id5_Stable
+    paths:
+    - /model/type/service_stop
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id6
+    persistence_id: id6_Stable
+    paths:
+    - /model/type/service_stop/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id7
+    persistence_id: id7_Stable
+    paths:
+    - /model/type/service_stop/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id8
+    persistence_id: id8_Stable
+    paths:
+    - /model/type/service_stop/msg2
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id9
+    persistence_id: id9_Stable
+    paths:
+    - /model/type/user_acct/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id10
+    persistence_id: id10_Stable
+    paths:
+    - /model/type/user_acct/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id11
+    persistence_id: id11_Stable
+    paths:
+    - /model/type/user_acct/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id12
+    persistence_id: id12_Stable
+    paths:
+    - /model/type/user_acct/opt
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id13
+    persistence_id: id13_Stable
+    paths:
+    - /model/type/user_acct/terminal
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id14
+    persistence_id: id14_Stable
+    paths:
+    - /model/type/user_acct/opt/opt_seq
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id15
+    persistence_id: id15_Stable
+    paths:
+    - /model/type/user_acct/opt/opt_seq/exe
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id16
+    persistence_id: id16_Stable
+    paths:
+    - /model/type/user_acct/opt/opt_seq/hostname
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id17
+    persistence_id: id17_Stable
+    paths:
+    - /model/type/user_acct/opt/opt_seq/addr
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id18
+    persistence_id: id18_Stable
+    paths:
+    - /model/type/cred_acq/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id19
+    persistence_id: id19_Stable
+    paths:
+    - /model/type/cred_acq/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id20
+    persistence_id: id20_Stable
+    paths:
+    - /model/type/cred_acq/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id21
+    persistence_id: id21_Stable
+    paths:
+    - /model/type/cred_acq/auid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id23
+    persistence_id: id23_Stable
+    paths:
+    - /model/type/cred_acq/opt
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id24
+    persistence_id: id24_Stable
+    paths:
+    - /model/type/cred_acq/terminal
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id25
+    persistence_id: id25_Stable
+    paths:
+    - /model/type/cred_acq/opt/opt_seq
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id26
+    persistence_id: id26_Stable
+    paths:
+    - /model/type/cred_acq/opt/opt_seq/exe
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id27
+    persistence_id: id27_Stable
+    paths:
+    - /model/type/cred_acq/opt/opt_seq/hostname
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id28
+    persistence_id: id28_Stable
+    paths:
+    - /model/type/cred_acq/opt/opt_seq/addr
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id29
+    persistence_id: id29_Stable
+    paths:
+    - /model/type/login
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id30
+    persistence_id: id30_Stable
+    paths:
+    - /model/type/login/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id31
+    persistence_id: id31_Stable
+    paths:
+    - /model/type/login/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id32
+    persistence_id: id32_Stable
+    paths:
+    - /model/type/login/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id33
+    persistence_id: id33_Stable
+    paths:
+    - /model/type/login/ses
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id34
+    persistence_id: id34_Stable
+    paths:
+    - /model/type/user_start/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id35
+    persistence_id: id35_Stable
+    paths:
+    - /model/type/user_start/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id36
+    persistence_id: id36_Stable
+    paths:
+    - /model/type/user_start/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id37
+    persistence_id: id37_Stable
+    paths:
+    - /model/type/user_start/ses
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id38
+    persistence_id: id38_Stable
+    paths:
+    - /model/type/user_start/opt
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id39
+    persistence_id: id39_Stable
+    paths:
+    - /model/type/user_start/terminal
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id40
+    persistence_id: id40_Stable
+    paths:
+    - /model/type/user_start/opt/opt_seq
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id41
+    persistence_id: id41_Stable
+    paths:
+    - /model/type/user_start/opt/opt_seq/exe
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id42
+    persistence_id: id42_Stable
+    paths:
+    - /model/type/user_start/opt/opt_seq/hostname
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id43
+    persistence_id: id43_Stable
+    paths:
+    - /model/type/user_start/opt/opt_seq/addr
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id44
+    persistence_id: id44_Stable
+    paths:
+    - /model/type/cred_disp
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id45
+    persistence_id: id45_Stable
+    paths:
+    - /model/type/cred_disp/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id46
+    persistence_id: id46_Stable
+    paths:
+    - /model/type/cred_disp/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id47
+    persistence_id: id47_Stable
+    paths:
+    - /model/type/cred_disp/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id48
+    persistence_id: id48_Stable
+    paths:
+    - /model/type/cred_disp/auid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id49
+    persistence_id: id49_Stable
+    paths:
+    - /model/type/cred_disp/ses
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id50
+    persistence_id: id50_Stable
+    paths:
+    - /model/type/cred_disp/fm/acct
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id51
+    persistence_id: id51_Stable
+    paths:
+    - /model/type/cred_disp/opt
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id52
+    persistence_id: id52_Stable
+    paths:
+    - /model/type/cred_disp/terminal
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id53
+    persistence_id: id53_Stable
+    paths:
+    - /model/type/cred_disp/opt/opt_seq
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id54
+    persistence_id: id54_Stable
+    paths:
+    - /model/type/cred_disp/opt/opt_seq/exe
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id55
+    persistence_id: id55_Stable
+    paths:
+    - /model/type/cred_disp/opt/opt_seq/hostname
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id56
+    persistence_id: id56_Stable
+    paths:
+    - /model/type/cred_disp/opt/opt_seq/addr
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id57
+    persistence_id: id57_Stable
+    paths:
+    - /model/type/cred_disp/fm/acct/acct
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id58
+    persistence_id: id58_Stable
+    paths:
+    - /model/type/user_end
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id59
+    persistence_id: id59_Stable
+    paths:
+    - /model/type/user_end/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id60
+    persistence_id: id60_Stable
+    paths:
+    - /model/type/user_end/id
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id61
+    persistence_id: id61_Stable
+    paths:
+    - /model/type/user_end/pid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id62
+    persistence_id: id62_Stable
+    paths:
+    - /model/type/user_end/auid
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id63
+    persistence_id: id63_Stable
+    paths:
+    - /model/type/user_end/ses
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id64
+    persistence_id: id64_Stable
+    paths:
+    - /model/type/user_end/fm/acct
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id65
+    persistence_id: id65_Stable
+    paths:
+    - /model/type/user_end/opt
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id66
+    persistence_id: id66_Stable
+    paths:
+    - /model/type/user_end/terminal
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id67
+    persistence_id: id67_Stable
+    paths:
+    - /model/type/user_end/opt/opt_seq
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id68
+    persistence_id: id68_Stable
+    paths:
+    - /model/type/user_end/opt/opt_seq/exe
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id69
+    persistence_id: id69_Stable
+    paths:
+    - /model/type/user_end/opt/opt_seq/hostname
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id70
+    persistence_id: id70_Stable
+    paths:
+    - /model/type/user_end/opt/opt_seq/addr
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id71
+    persistence_id: id71_Stable
+    paths:
+    - /model/type/user_end/fm/acct/acct
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id72
+    persistence_id: id72_Stable
+    paths:
+    - /model/type/user_login
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id73
+    persistence_id: id73_Stable
+    paths:
+    - /model/type/user_login/time
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id74
+    persistence_id: id74_Stable
+    paths:
+    - /model/type/user_login/opt
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id75
+    persistence_id: id75_Stable
+    paths:
+    - /model/type/user_login/terminal
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id76
+    persistence_id: id76_Stable
+    paths:
+    - /model/type/user_login/opt/opt_seq
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id77
+    persistence_id: id77_Stable
+    paths:
+    - /model/type/user_login/opt/opt_seq/hostname
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id78
+    persistence_id: id78_Stable
+    paths:
+    - /model/type/user_login/opt/opt_seq/addr
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id79
+    persistence_id: id79_Stable
+    paths:
+    - /model/type/user_cmd
+    output_logline: true
+-   type: CharsetDetector
+    id: CharsetDetector_Stable_id80
+    persistence_id: id80_Stable
+    paths:
+    - /model/type/cred_refr
+    output_logline: true
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id0
+    persistence_id: id0_CharacterPairProbability
+    paths:
+    - /model/type/user_acct/terminal
+    output_logline: true
+    prob_thresh: 0.458
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id1
+    persistence_id: id1_CharacterPairProbability
+    paths:
+    - /model/type/user_acct/opt/opt_seq/hostname
+    output_logline: true
+    prob_thresh: 0.449
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id2
+    persistence_id: id2_CharacterPairProbability
+    paths:
+    - /model/type/user_acct/opt/opt_seq/addr
+    output_logline: true
+    prob_thresh: 0.449
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id3
+    persistence_id: id3_CharacterPairProbability
+    paths:
+    - /model/type/user_acct/fm/acct/acct
+    output_logline: true
+    prob_thresh: 0.518
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id4
+    persistence_id: id4_CharacterPairProbability
+    paths:
+    - /model/type/cred_acq/auid
+    output_logline: true
+    prob_thresh: 0.229
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id5
+    persistence_id: id5_CharacterPairProbability
+    paths:
+    - /model/type/cred_acq/ses
+    output_logline: true
+    prob_thresh: 0.0
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id6
+    persistence_id: id6_CharacterPairProbability
+    paths:
+    - /model/type/cred_acq/terminal
+    output_logline: true
+    prob_thresh: 0.458
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id7
+    persistence_id: id7_CharacterPairProbability
+    paths:
+    - /model/type/cred_acq/opt/opt_seq/hostname
+    output_logline: true
+    prob_thresh: 0.423
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id8
+    persistence_id: id8_CharacterPairProbability
+    paths:
+    - /model/type/cred_acq/opt/opt_seq/addr
+    output_logline: true
+    prob_thresh: 0.423
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id9
+    persistence_id: id9_CharacterPairProbability
+    paths:
+    - /model/type/login/auid
+    output_logline: true
+    prob_thresh: 0.203
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id10
+    persistence_id: id10_CharacterPairProbability
+    paths:
+    - /model/type/user_start/auid
+    output_logline: true
+    prob_thresh: 0.203
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id11
+    persistence_id: id11_CharacterPairProbability
+    paths:
+    - /model/type/user_start/terminal
+    output_logline: true
+    prob_thresh: 0.424
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id12
+    persistence_id: id12_CharacterPairProbability
+    paths:
+    - /model/type/user_start/opt/opt_seq/hostname
+    output_logline: true
+    prob_thresh: 0.449
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id13
+    persistence_id: id13_CharacterPairProbability
+    paths:
+    - /model/type/user_start/opt/opt_seq/addr
+    output_logline: true
+    prob_thresh: 0.449
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id14
+    persistence_id: id14_CharacterPairProbability
+    paths:
+    - /model/type/user_start/fm/acct/acct
+    output_logline: true
+    prob_thresh: 0.518
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id15
+    persistence_id: id15_CharacterPairProbability
+    paths:
+    - /model/type/cred_disp/auid
+    output_logline: true
+    prob_thresh: 0.206
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id16
+    persistence_id: id16_CharacterPairProbability
+    paths:
+    - /model/type/cred_disp/terminal
+    output_logline: true
+    prob_thresh: 0.43
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id17
+    persistence_id: id17_CharacterPairProbability
+    paths:
+    - /model/type/cred_disp/opt/opt_seq/hostname
+    output_logline: true
+    prob_thresh: 0.449
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id18
+    persistence_id: id18_CharacterPairProbability
+    paths:
+    - /model/type/cred_disp/opt/opt_seq/addr
+    output_logline: true
+    prob_thresh: 0.449
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id19
+    persistence_id: id19_CharacterPairProbability
+    paths:
+    - /model/type/cred_disp/fm/acct/acct
+    output_logline: true
+    prob_thresh: 0.518
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id20
+    persistence_id: id20_CharacterPairProbability
+    paths:
+    - /model/type/user_end/auid
+    output_logline: true
+    prob_thresh: 0.206
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id21
+    persistence_id: id21_CharacterPairProbability
+    paths:
+    - /model/type/user_end/terminal
+    output_logline: true
+    prob_thresh: 0.43
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id22
+    persistence_id: id22_CharacterPairProbability
+    paths:
+    - /model/type/user_end/opt/opt_seq/hostname
+    output_logline: true
+    prob_thresh: 0.449
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id23
+    persistence_id: id23_CharacterPairProbability
+    paths:
+    - /model/type/user_end/opt/opt_seq/addr
+    output_logline: true
+    prob_thresh: 0.449
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id24
+    persistence_id: id24_CharacterPairProbability
+    paths:
+    - /model/type/user_end/fm/acct/acct
+    output_logline: true
+    prob_thresh: 0.518
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id25
+    persistence_id: id25_CharacterPairProbability
+    paths:
+    - /model/type/user_login/auid
+    output_logline: true
+    prob_thresh: 0.617
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id26
+    persistence_id: id26_CharacterPairProbability
+    paths:
+    - /model/type/user_login/fm/id
+    output_logline: true
+    prob_thresh: 0.765
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id27
+    persistence_id: id27_CharacterPairProbability
+    paths:
+    - /model/type/user_login/terminal
+    output_logline: true
+    prob_thresh: 0.76
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id28
+    persistence_id: id28_CharacterPairProbability
+    paths:
+    - /model/type/user_login/fm/id/id
+    output_logline: true
+    prob_thresh: 0.617
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id29
+    persistence_id: id29_CharacterPairProbability
+    paths:
+    - /model/type/user_cmd/time
+    output_logline: true
+    prob_thresh: 0.513
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id30
+    persistence_id: id30_CharacterPairProbability
+    paths:
+    - /model/type/user_cmd/id
+    output_logline: true
+    prob_thresh: 0.783
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id31
+    persistence_id: id31_CharacterPairProbability
+    paths:
+    - /model/type/user_cmd/pid
+    output_logline: true
+    prob_thresh: 0.756
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id32
+    persistence_id: id32_CharacterPairProbability
+    paths:
+    - /model/type/user_cmd/ses
+    output_logline: true
+    prob_thresh: 0.825
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id33
+    persistence_id: id33_CharacterPairProbability
+    paths:
+    - /model/type/cred_refr/time
+    output_logline: true
+    prob_thresh: 0.513
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id34
+    persistence_id: id34_CharacterPairProbability
+    paths:
+    - /model/type/cred_refr/id
+    output_logline: true
+    prob_thresh: 0.65
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id35
+    persistence_id: id35_CharacterPairProbability
+    paths:
+    - /model/type/cred_refr/pid
+    output_logline: true
+    prob_thresh: 0.756
+-   type: EntropyDetector
+    id: EntropyDetector_CharacterPairProbability_id36
+    persistence_id: id36_CharacterPairProbability
+    paths:
+    - /model/type/cred_refr/ses
+    output_logline: true
+    prob_thresh: 0.825
+-   type: EventFrequencyDetector
+    id: EventFrequencyDetector_EventFrequency_id0
+    persistence_id: id0_EventFrequency
+    constraint_list:
+    - /model
+    output_logline: true
+    window_size: 245
+    num_windows: 300
+    confidence_factor: 0.2
+    season: 28800
+    empty_window_warnings: false
+-   type: EventFrequencyDetector
+    id: EventFrequencyDetector_EventFrequency_id1
+    persistence_id: id1_EventFrequency
+    constraint_list:
+    - /model/type/service_start
+    output_logline: true
+    window_size: 374
+    num_windows: 300
+    confidence_factor: 0.2
+    season: 28800
+    empty_window_warnings: false
+-   type: EventFrequencyDetector
+    id: EventFrequencyDetector_EventFrequency_id2
+    persistence_id: id2_EventFrequency
+    constraint_list:
+    - /model/type/service_stop
+    output_logline: true
+    window_size: 375
+    num_windows: 300
+    confidence_factor: 0.2
+    season: 28800
+    empty_window_warnings: false
+-   type: EventFrequencyDetector
+    id: EventFrequencyDetector_EventFrequency_id3
+    persistence_id: id3_EventFrequency
+    constraint_list:
+    - /model/type/user_acct
+    output_logline: true
+    window_size: 288
+    num_windows: 300
+    confidence_factor: 0.2
+    season: 28800
+    empty_window_warnings: false
+-   type: EventFrequencyDetector
+    id: EventFrequencyDetector_EventFrequency_id4
+    persistence_id: id4_EventFrequency
+    constraint_list:
+    - /model/type/cred_acq
+    output_logline: true
+    window_size: 288
+    num_windows: 300
+    confidence_factor: 0.2
+    season: 28800
+    empty_window_warnings: false
+-   type: EventFrequencyDetector
+    id: EventFrequencyDetector_EventFrequency_id5
+    persistence_id: id5_EventFrequency
+    constraint_list:
+    - /model/type/user_start
+    output_logline: true
+    window_size: 287
+    num_windows: 300
+    confidence_factor: 0.2
+    season: 86400
+    empty_window_warnings: false
+-   type: EventFrequencyDetector
+    id: EventFrequencyDetector_EventFrequency_id6
+    persistence_id: id6_EventFrequency
+    constraint_list:
+    - /model/type/cred_disp
+    output_logline: true
+    window_size: 286
+    num_windows: 300
+    confidence_factor: 0.2
+    season: 86400
+    empty_window_warnings: false
+-   type: NewMatchPathDetector
+    id: NewMatchPathDetector
+    suppress: true
+-   type: VerboseUnparsedAtomHandler
+    id: VerboseUnparsedAtomHandler
+    suppress: true
+EventHandlers:
+-   id: stpefile
+    type: StreamPrinterEventHandler
+    json: true
+    pretty: false
+    output_file_path: /tmp/aminer_out.json
