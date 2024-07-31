@@ -195,9 +195,11 @@ class AminerConfigurationEngine(ParameterSelection):
             pwd = file.read()
         # run AMiner
         if training:
-            command = f"echo {pwd} | sudo -S aminer -C -o -c " + config_path
+            #command = f"echo {pwd} | sudo -S aminer -C -o -c " + config_path
+            command = f"sudo aminer -C -o -c " + config_path
         else:
-            command = f"echo {pwd} | sudo -S aminer -o -c " + config_path
+            #command = f"echo {pwd} | sudo -S aminer -o -c " + config_path
+            command = f"sudo aminer -C -o -c " + config_path
         os.system(command)
 
     def optimize(
@@ -221,6 +223,7 @@ class AminerConfigurationEngine(ParameterSelection):
         fancy=True
     ):
         """Optimize the 'Analysis' part of a configuration."""
+        os.system("sudo echo")
         # if no detectors specified
         if len(set(detectors).intersection(set(self.detectors))) == 0:
             return analysis_config
@@ -241,6 +244,7 @@ class AminerConfigurationEngine(ParameterSelection):
         fp_dict = {key: [] for key in all_ids}
         fp_per_minute_dict = {key: [] for key in all_ids}
         crit_min_dict = {key: [] for key in all_ids}
+        os.system("sudo echo")
         for i in splits:
             label = str(i)
             start, end = i * fold_size, (i + 1) * fold_size
@@ -284,7 +288,10 @@ class AminerConfigurationEngine(ParameterSelection):
                             new_thresh = float(round(np.nanmin(crit_min_dict[id]) + current_settings["offset"], 3))
                             # delete instance if thresh outside of allowed range
                             if new_thresh < current_settings["min"] or new_thresh > current_settings["max"]:
-                                print(f"\tDeleting \t", instance["paths"])
+                                try:
+                                    print(f"\tDeleting", instance["type"], "-", instance["paths"])
+                                except:
+                                    print(f"\tDeleting", instance["type"], "-", instance["constraint_list"])
                                 optimized_config.remove(instance)
                             else:
                                 # update config with new thresh
@@ -386,6 +393,6 @@ class AminerConfigurationEngine(ParameterSelection):
         else:
             prefix = "ace"
         self.result_label = f"{prefix}_S{str(len(self.df))}"
-        self.output_dir = os.path.join("output", '_'.join(self.detectors), self.parser, self.label, self.result_label)
+        self.output_dir = os.path.join("output", '_'.join(self.detectors), self.parser, self.result_label)
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "optimization"), exist_ok=True)

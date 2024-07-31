@@ -47,25 +47,16 @@ class ParameterSelection:
             params = settings.copy()
             self.selected_vars = []
             v = "Variables"
-            for action in ["PreFilter", "Select", "PostFilter"]: #TO-DO: implement "PostFilter"
+            for action in ["PreFilter", "PreSelect", "Select", "PostFilter"]: #TO-DO: implement "PostFilter"
                 if action in settings[v].keys():
                     for method in settings[v][action].keys():
                         variables = mapping[v][method](**settings[v][action][method])
                         params[v][action][method] = variables
                         if action == "PreFilter":
                             self.df = self.df.drop(columns=variables)
-                        elif action == "Select":
-                            self.selected_vars += variables
-
-            # all_variables = list(self.df.columns)
-            # for action in settings[v].keys():
-            #     method = list(settings[v][action].keys())[0]
-            #     method_variables = mapping[v][method](**settings[v][action][method])
-            #     params[v][action][method] = method_variables
-            #     if action == "Filter":
-            #         self.df = self.df.drop(columns=method_variables)
-            #     elif action == "Select":
-            #         self.selected_vars += method_variables
+                        elif action == "PreSelect":
+                            flattened_vars = [i for sublist in variables for i in sublist] if type(variables[0]) == list else variables
+                            self.df = self.df[flattened_vars]
                             
             s = "SpecificParams"
             if s in settings.keys():

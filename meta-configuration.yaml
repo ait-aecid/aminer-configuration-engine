@@ -1,10 +1,16 @@
 ParameterSelection:
+
+  # define detector
   NewMatchPathValueDetector:
+    # define how the variables (or paths) are selected/filtered
     Variables:
+      # pre-filter static variables
       PreFilter:
-        Static: {}
+        Static: {} # {} means no additional parameters are necessary or use default
+      # select stable variables from the set of filtered variables
       Select:
         Stable:
+          # define configuration parameters
           how: by_occurrence
           segment_threshs: [1.0, 0.165, 0.027, 0.005, 0.001]
 

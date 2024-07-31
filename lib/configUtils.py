@@ -87,8 +87,8 @@ def assemble_detector(detector: str, params: dict) -> list:
     instance_list = []
     used_variables = set()
     filter_list = []
-    if "Filter" in params["Variables"].keys():
-        filter_list = flatten_dict(params["Variables"]["PostFilter"])
+    # if "Filter" in params["Variables"].keys():
+    #     filter_list = flatten_dict(params["Variables"]["PostFilter"])
     i = 0
     for method in params["Variables"]["Select"].keys():
         for variable in params["Variables"]["Select"][method]:

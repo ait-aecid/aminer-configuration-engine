@@ -33,6 +33,7 @@ def main(
     # save config
     config_path = os.path.join(ace.output_dir, "config.yaml")
     dump_config(config_path, ace.config)
+    print("Configuration file saved to:", config_path)
 
     return config_runtime
 
