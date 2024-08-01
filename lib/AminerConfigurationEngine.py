@@ -202,7 +202,7 @@ class AminerConfigurationEngine(ParameterSelection):
             command = f"sudo aminer -C -o -c " + config_path
         os.system(command)
 
-    def optimize(
+    def optimization(
         self, 
         X: pd.DataFrame, 
         analysis_config: list, 
@@ -311,9 +311,7 @@ class AminerConfigurationEngine(ParameterSelection):
 
     def configure_detectors(self, predefined_config=None) -> list:
         """Configure detectors and return their configurations as dictionaries in a list."""
-
         df = self.df.copy()
-
         detector_config = []
         if predefined_config == None:
             #df_with_ts = df.copy()
@@ -336,9 +334,9 @@ class AminerConfigurationEngine(ParameterSelection):
                 instance["id"] = f"noName_id_{i}"
                 detector_config[i] = instance
 
-        if len(detector_config) > 0:
+        if len(detector_config) > 0 and self.optimize:
             for split_type in self.settings["Optimization"].keys():
-                optimized_config = self.optimize(df, detector_config, **self.settings["Optimization"][split_type])
+                optimized_config = self.optimization(df, detector_config, **self.settings["Optimization"][split_type])
                 detector_config = optimized_config
         return detector_config
 
