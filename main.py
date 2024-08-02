@@ -38,7 +38,7 @@ def main(
     start = time.time()
     analysis_config = ace.configure_detectors(params["predefined_config_path"])
     config_runtime = time.time()-start
-    print(f"Configuration completed (runtime: {config_runtime})\n")
+    print(f"Configuration completed (runtime: {config_runtime}).\n")
 
     # add trivial config parts
     ace.config["LearnMode"] = True

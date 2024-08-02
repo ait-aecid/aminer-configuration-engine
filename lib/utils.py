@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import itertools
 import os
-#import ruamel.yaml
 import yaml
-from sklearn import metrics
+from itertools import combinations
+from sklearn.preprocessing import LabelEncoder
+import math
+import networkx as nx
 
 def set_without_NaN(data):
     """Create a set of a listlike object where NaN values are excluded."""
@@ -115,3 +117,72 @@ def metrics_dicts_to_df(eval_dicts: list, nan_to_zero=True, to_csv=False, path="
             print("Saving to:", path)
             df_dict[key].to_csv(f"{path}/{key}_{filename}.csv", index=False)
     return df_dict
+
+def get_timestamps(data : pd.DataFrame, predefined_timestamp_paths):
+    """Returns timestamps of the data."""
+    timestamps_paths = [ts for ts in predefined_timestamp_paths if ts in data.columns]
+    ts_series = data[timestamps_paths].ffill(axis=1).bfill(axis=1).iloc[:, 0]
+    ts_series.name = "timestamps"
+    try:
+        return pd.to_datetime(ts_series, unit="s") # audit 
+    except:
+        return pd.to_datetime(ts_series, format="%d/%b/%Y:%H:%M:%S %z").dt.tz_localize(None) # apache
+
+def encode_df(df) -> pd.DataFrame:
+    """Encode each column of a df individually."""
+    return df.apply(lambda x: LabelEncoder().fit_transform(x))
+
+def filter_by_value_occurrence(series: pd.Series, thresh=2):
+    """Filter values that occur less than the threshold."""
+    value_counts = series.value_counts()
+    filtered_values = value_counts[value_counts >= thresh].index
+    filtered_series = series[series.isin(filtered_values)]
+    return filtered_series
+
+def get_combos(arr, max_combo_length=2):
+    """Get all possible combinations of a list."""
+    combos = []
+    for i in range(2, min(len(arr), max_combo_length, 5) + 1):
+        combo = list(combinations(arr, i))
+        combos.extend(combo)
+    return combos
+
+def get_number_of_combos(n, k_min=2, k_max=3):
+    """Calculate the number of possible combinations."""
+    n = int(n)
+    number_of_combos = 0
+    for i in range(k_min, k_max + 1):
+        number_of_combos += math.comb(n, i)
+    return number_of_combos
+
+def merge_connected_elements(tuples_list: list):
+    """Merge connected combinations if they are connected."""
+    G = nx.Graph()
+    G.add_edges_from(tuples_list)
+    connected_components = nx.connected_components(G)
+    merged_chains = []
+    for component in connected_components:
+        merged_chains.append(tuple(sorted(component)))
+    return merged_chains
+
+def merge_cycles(tuples_list: list):
+    """Merge connected combinations if they form a cycle."""
+    G = nx.Graph()
+    G.add_edges_from(tuples_list)
+    merged = []
+    cycles = nx.cycle_basis(G)
+    for cycle in cycles:
+        if len(cycle) >= 3:
+            merged.append(tuple(sorted(cycle)))
+    return merged
+
+def get_weighted_dict(unweighted_values : dict, weights : dict, complementary_percentage=False):
+    """Weigh the values of a dictionary by weights defined in another dictionary. Keep in mind that their keys have to match."""
+    if complementary_percentage: 
+        weighted_list = [unweighted_values[key]*(1-weights[key]) for key in unweighted_values.keys()]
+    else: 
+        weighted_list = [unweighted_values[key]*(weights[key]) for key in unweighted_values.keys()]
+    weighted_dict = {
+        key: value for key, value in zip(unweighted_values.keys(), weighted_list)
+    }
+    return weighted_dict

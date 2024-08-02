@@ -1,17 +1,13 @@
 import pandas as pd
 import numpy as np
-import itertools
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 warnings.filterwarnings("ignore")
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_val_score
 from scipy.signal import find_peaks
 import statsmodels.api as sm
 
-from lib.transformationUtils import *
-from lib.selectionUtils import *
+from lib.utils import *
 
 class ParameterSelection:
     """This class handles the selection of parameters."""

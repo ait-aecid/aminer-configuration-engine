@@ -8,7 +8,7 @@ import numpy as np
 import importlib
 from tqdm import tqdm
 
-from lib.transformationUtils import *
+from lib.utils import *
 from lib.configUtils import *
 from lib.ParameterSelection import *
 from lib.Evaluation import *
@@ -52,6 +52,10 @@ class AminerConfigurationEngine(ParameterSelection):
 
         self.label = "TBA"
 
+        # create tmp directory
+        os.makedirs("tmp", exist_ok=True)
+        os.makedirs(os.path.join("tmp", "data_parsed"), exist_ok=True)
+
         # get command line arguments if no parameters are passed
         if params == None:
             self.set_and_get_args(False)
@@ -67,7 +71,7 @@ class AminerConfigurationEngine(ParameterSelection):
         start = time.time()
         self.df = self.get_data(save_to=self.data_path)
         end = time.time()
-        print(f"Finished data extraction (runtime: {end-start})")
+        print(f"Finished data extraction (runtime: {end-start}).")
 
         self.init_output_dir()
 
@@ -88,14 +92,15 @@ class AminerConfigurationEngine(ParameterSelection):
         # similar to process in /usr/lib/logdata-anomaly-miner/aminer/input/ByteStreamLineAtomizer.py
         match_dict_list = []
         timestamps = []
-        # for faster data ingestion
+        # for faster repeated data ingestion
         h5_label = self.data_dir.replace("/","-")
         h5_filename = f"{h5_label}_{self.parser}.h5" # add number of instances
-        parsed_data_dir = "data/data_parsed/"
+        parsed_data_dir = "tmp/data_parsed/"
         parsed_data_path = os.path.join(parsed_data_dir, h5_filename)
         root, dirs, files = list(os.walk(parsed_data_dir))[0]
         if h5_filename not in files:
             if interval is None:
+                print("Parsing data ...")
                 with open(path, "rb") as file:
                     for line_data in file:
                         log_atom = LogAtom(line_data, None, None, None)
@@ -153,26 +158,6 @@ class AminerConfigurationEngine(ParameterSelection):
         ts_string = string.split(split_char[0])[1].split(split_char[1])[0]
         ts = pd.to_datetime(ts_string, format=self.file_type_info[self.parser]["timestamp_format"], unit=self.file_type_info[self.parser]["unit"])
         return ts
-            
-    def get_timestamps_from_logfile(self, interval: tuple):
-        """Extract timestamps from the log file. Returns timestamps as strings."""
-        ts = []
-        with open(self.data_path, "r") as file:
-            for _ in range(interval[0]): # skip lines
-                file.readline()
-            for i in range(interval[0], interval[1]):
-                ts.append(self.get_timestamp_from_string(file.readline()))
-        return ts
-
-    def get_timestamps(data : pd.DataFrame, predefined_timestamp_paths):
-        """Returns timestamps of the data."""
-        timestamps_paths = [ts for ts in predefined_timestamp_paths if ts in data.columns]
-        ts_series = data[timestamps_paths].ffill(axis=1).bfill(axis=1).iloc[:, 0]
-        ts_series.name = "timestamps"
-        try:
-            return pd.to_datetime(ts_series, unit="s") # audit 
-        except:
-            return pd.to_datetime(ts_series, format="%d/%b/%Y:%H:%M:%S %z").dt.tz_localize(None) # apache
 
     def aminer_run(self, X, analysis_config, training: bool, label: str, optimization_run=False):
         """Fit AMiner to training data and predict test data."""
@@ -233,7 +218,7 @@ class AminerConfigurationEngine(ParameterSelection):
         n_samples = len(X)
         fold_size = n_samples // (k+1)
         if fancy:
-            splits = tqdm(range(1,k+1), desc='\tOptimizing configuration', unit='iteration', ncols=100)
+            splits = tqdm(range(1,k+1), desc='Optimizing configuration', unit='iteration', ncols=100)
         else:
             splits = range(1,k+1)
         # remove unspecified detectors from config
@@ -289,22 +274,22 @@ class AminerConfigurationEngine(ParameterSelection):
                             # delete instance if thresh outside of allowed range
                             if new_thresh < current_settings["min"] or new_thresh > current_settings["max"]:
                                 try:
-                                    print(f"\tDeleting", instance["type"], "-", instance["paths"])
+                                    print(f"Deleting", instance["type"], "-", instance["paths"])
                                 except:
-                                    print(f"\tDeleting", instance["type"], "-", instance["constraint_list"])
+                                    print(f"Deleting", instance["type"], "-", instance["constraint_list"])
                                 optimized_config.remove(instance)
                             else:
                                 # update config with new thresh
                                 thresh_name = set(thresh_names).intersection(set(instance.keys())).pop()
-                                print(f"\tAdjusting", instance["type"], "-", instance["paths"], f"... '{thresh_name}': {instance[thresh_name]} -> {new_thresh}")
+                                print(f"Adjusting", instance["type"], "-", instance["paths"], f"... '{thresh_name}': {instance[thresh_name]} -> {new_thresh}")
                                 idx = optimized_config.index(instance) # get idx before changing instance
                                 instance[thresh_name] = new_thresh
                                 optimized_config[idx] = instance
                         else:
                             try:
-                                print(f"\tDeleting", instance["type"], "-", instance["paths"])
+                                print(f"Deleting", instance["type"], "-", instance["paths"])
                             except:
-                                print(f"\tDeleting", instance["type"], "-", instance["constraint_list"])
+                                print(f"Deleting", instance["type"], "-", instance["constraint_list"])
                             optimized_config.remove(instance)
         return optimized_config
 
@@ -314,7 +299,6 @@ class AminerConfigurationEngine(ParameterSelection):
         df = self.df.copy()
         detector_config = []
         if predefined_config == None:
-            #df_with_ts = df.copy()
             for current_detector in self.detectors:
                 if current_detector != "EventFrequencyDetector":
                     current_df = df.drop(columns="ts")
@@ -349,7 +333,6 @@ class AminerConfigurationEngine(ParameterSelection):
         self.input_filepaths = [os.path.join(self.data_dir, file) for file in files]
         # concatenate files and save to tmp folder
         concatenate_files(self.input_filepaths, save_to)
-   
         # get data
         self.df = self.logfile_to_df(path=save_to, interval=None)
         return self.df
@@ -369,7 +352,6 @@ class AminerConfigurationEngine(ParameterSelection):
             with open(path, "r") as f:
                 n_lines[file] = sum(1 for _ in f) # get number of lines for offset
         return n_lines, start_timestamps
-    
     
     def set_and_get_args(self, print_args=True):
         """Configures argument parser and returns command line arguments."""
