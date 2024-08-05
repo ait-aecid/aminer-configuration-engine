@@ -10,63 +10,6 @@ def flatten_dict(d: dict) -> list:
             values.extend(value)
     return values
 
-def get_base_config(parsertype: str, print_to_terminal=False):
-    """Get the static part of the configurations."""
-
-    parser = [{
-                "id": 'START',
-                "start": True,
-                "type": parsertype,
-                "name": "parser",
-            }]
-    input_ = {
-        "timestamp_paths": [
-            "/model/time",
-            "/model/@timestamp/time",
-            "/model/with_df/time",
-            "/model/type/execve/time",
-            "/model/type/proctitle/time",
-            "/model/type/syscall/time",
-            "/model/type/path/time",
-            "/model/type/login/time",
-            "/model/type/sockaddr/time",
-            "/model/type/unknown/time",
-            "/model/type/cred_refr/time",
-            "/model/type/user_start/time",
-            "/model/type/user_acct/time",
-            "/model/type/user_auth/time",
-            "/model/type/user_login/time",
-            "/model/type/cred_disp/time",
-            "/model/type/service_start/time",
-            "/model/type/service_stop/time",
-            "/model/type/user_end/time",
-            "/model/type/user_cmd/time",
-            "/model/type/cred_acq/time",
-            "/model/type/avc/time",
-            "/model/type/user_bprm_fcaps/time",
-            "/model/datetime",]
-    }
-    eventhandlers = [{
-            "id": 'stpefile',
-            "type": 'StreamPrinterEventHandler',
-            "json": True,
-            "pretty": False,
-            "output_file_path": '/tmp/aminer_out.json',
-        }]
-    if print_to_terminal:
-        eventhandlers.append({"id": "stpe", "type": "StreamPrinterEventHandler"})
-    
-    base_config = {
-        "LearnMode" : None,
-        "LogResourceList" : None,
-        "Parser" : parser,
-        "Input" : input_,
-        "Analysis" : None,
-        "EventHandlers" : eventhandlers,
-    }
-    return base_config
-
-
 def load_yaml_file(file_path):
     """Load .yaml file into a dictionary."""
     with open(file_path, 'r') as file:
@@ -148,5 +91,5 @@ def adapt_predefined_analysis_config(analysis_config, detectors, df, print_delet
             adapted_config.append(new_item)
     if print_deleted:
         print(f"Remaining types: {remaining_types}")
-        print(f"Remaining paths: {remaining_paths}\n")
+        print(f"Remaining paths: {remaining_paths}")
     return adapted_config

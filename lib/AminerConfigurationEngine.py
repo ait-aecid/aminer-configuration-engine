@@ -8,6 +8,7 @@ import numpy as np
 import importlib
 from tqdm import tqdm
 
+import static_settings
 from lib.utils import *
 from lib.configUtils import *
 from lib.ParameterSelection import *
@@ -26,31 +27,10 @@ class AminerConfigurationEngine(ParameterSelection):
     def __init__(self, params):
         """Initialize project. Returns parsed command line arguments."""
 
-        self.detector_id_dict = {
-            "1" : "NewMatchPathValueDetector",
-            "2" : "NewMatchPathValueComboDetector",
-            "3" : "CharsetDetector",
-            "4" : "EntropyDetector",
-            "5" : "ValueRangeDetector",
-            "6" : "EventFrequencyDetector"
-        }
-
-        self.file_type_info = {
-            'AuditdParsingModel': {
-                'type': "audit",
-                'timestamp_format': None,
-                'split_char': ["msg=audit(", ":"],
-                "unit" : "s",
-            },
-            'ApacheAccessParsingModel': {
-                'type': "apache2/.*access",
-                'timestamp_format': '%d/%b/%Y:%H:%M:%S %z',
-                'split_char': ["[", "]"],
-                "unit": None
-            }
-        }
-
+        self.detector_id_dict = static_settings.detector_id_dict
+        self.file_type_info = static_settings.timestamp_extraction_dict
         self.label = "TBA"
+        self.predefined_config = None
 
         # create tmp directory
         os.makedirs("tmp", exist_ok=True)
@@ -62,9 +42,13 @@ class AminerConfigurationEngine(ParameterSelection):
         else:
             self.__dict__.update(params)
 
+        if self.predefined_config_path != None:
+            self.predefined_config = load_yaml_file(self.predefined_config_path)
+
         self.detectors = [self.detector_id_dict[id] for id in self.detector_ids]
 
-        base_config = get_base_config(self.parser)
+        base_config = load_yaml_file("base_config.yml")
+        base_config["Parser"][0]["type"] = self.parser
         self.timestamp_variables = base_config["Input"]["timestamp_paths"]
 
         self.data_path = os.path.join("tmp", "current_data.log")
@@ -78,7 +62,6 @@ class AminerConfigurationEngine(ParameterSelection):
         self.current_dir = "file://" + os.getcwd()
 
         # define standard inputs and fill config dictionaries
-        base_config = get_base_config(self.parser)
         self.config = base_config.copy()
         self.timestamp_variables = base_config["Input"]["timestamp_paths"]
         with open("meta-configuration.yaml", 'r') as yaml_file:
@@ -93,7 +76,7 @@ class AminerConfigurationEngine(ParameterSelection):
         match_dict_list = []
         timestamps = []
         # for faster repeated data ingestion
-        h5_label = self.data_dir.replace("/","-")
+        h5_label = "-".join([p.split("/")[-1] for p in self.input_filepaths])
         h5_filename = f"{h5_label}_{self.parser}.h5" # add number of instances
         parsed_data_dir = "tmp/data_parsed/"
         parsed_data_path = os.path.join(parsed_data_dir, h5_filename)
@@ -175,16 +158,11 @@ class AminerConfigurationEngine(ParameterSelection):
         dump_config(config_path, self.config)
         # save data for aminer
         copy_and_save_file(self.data_path, outputfile, list(X.index))
-        # get sudo password - delete later!!
-        with open("/home/viktor/projects/aminer-configuration-engine/key/pwd.txt") as file:
-            pwd = file.read()
         # run AMiner
         if training:
-            #command = f"echo {pwd} | sudo -S aminer -C -o -c " + config_path
             command = f"sudo aminer -C -o -c " + config_path
         else:
-            #command = f"echo {pwd} | sudo -S aminer -o -c " + config_path
-            command = f"sudo aminer -C -o -c " + config_path
+            command = f"sudo aminer -o -c " + config_path
         os.system(command)
 
     def optimization(
@@ -229,7 +207,6 @@ class AminerConfigurationEngine(ParameterSelection):
         fp_dict = {key: [] for key in all_ids}
         fp_per_minute_dict = {key: [] for key in all_ids}
         crit_min_dict = {key: [] for key in all_ids}
-        os.system("sudo echo")
         for i in splits:
             label = str(i)
             start, end = i * fold_size, (i + 1) * fold_size
