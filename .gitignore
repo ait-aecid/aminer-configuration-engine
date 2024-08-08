@@ -2,6 +2,5 @@ __pycache__
 data_all
 output
 tools
-base_config.yml
 tmp
 tool.ipynb

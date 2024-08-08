@@ -1,0 +1,41 @@
+LearnMode: null
+LogResourceList: null
+Parser:
+- id: START
+  start: true
+  type: null
+  name: parser
+Input:
+  multi_source: True
+  timestamp_paths:
+  - /model/time
+  - /model/@timestamp/time
+  - /model/with_df/time
+  - /model/type/execve/time
+  - /model/type/proctitle/time
+  - /model/type/syscall/time
+  - /model/type/path/time
+  - /model/type/login/time
+  - /model/type/sockaddr/time
+  - /model/type/unknown/time
+  - /model/type/cred_refr/time
+  - /model/type/user_start/time
+  - /model/type/user_acct/time
+  - /model/type/user_auth/time
+  - /model/type/user_login/time
+  - /model/type/cred_disp/time
+  - /model/type/service_start/time
+  - /model/type/service_stop/time
+  - /model/type/user_end/time
+  - /model/type/user_cmd/time
+  - /model/type/cred_acq/time
+  - /model/type/avc/time
+  - /model/type/user_bprm_fcaps/time
+  - /model/datetime
+Analysis: null
+EventHandlers:
+- id: stpefile
+  type: StreamPrinterEventHandler
+  json: true
+  pretty: false
+  output_file_path: /tmp/aminer_out.json

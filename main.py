@@ -40,7 +40,7 @@ def main(
 
     # add trivial config parts
     ace.config["LearnMode"] = True
-    ace.config["LogResourceList"] = ace.input_filepaths
+    ace.config["LogResourceList"] = [os.path.join(ace.current_dir, path) for path in ace.input_filepaths]
     ace.config["Analysis"] = analysis_config
 
     # save config
