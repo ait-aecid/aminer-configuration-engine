@@ -1,5 +1,4 @@
 ParameterSelection:
-
   # define detector
   NewMatchPathValueDetector:
     # define how the variables (or paths) are selected/filtered
