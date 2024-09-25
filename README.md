@@ -1,12 +1,15 @@
 # AMiner-Configuration-Engine
 
-This code allows to generate configurations for the logdata-anomaly-miner (AMiner) based on static log file analysis.
+This code allows to generate configurations for the [logdata-anomaly-miner](https://github.com/ait-aecid/logdata-anomaly-miner) (AMiner) based on static log file analysis.
 
 **Optimization is not yet working! (requires adaptations in AMiner - coming soon ...)**
 
+## **Installation**
+
+
 ## **Execution**
 
-1. Drop relevant files into directory data/. The log data has to be of a single type (e.g., audit or ApacheAccess).
+1. Drop relevant files into directory [data](data). The log data has to be of a single type (e.g. audit or ApacheAccess). The given sample data in [data](data) is from [AIT Log Data Set V2.0](https://zenodo.org/records/5789064) and should be removed before dropping new files. The 
 2. Execute command:
 
 ```bash
