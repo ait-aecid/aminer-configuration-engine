@@ -20,10 +20,10 @@ ParameterSelection:
         Static: {}
         Random: {}
         Occurrence:
-          how: "less_than"
+          how: less_than
           thresh: 0.005
       Select:
-        Co-OccurrenceCombos:
+        CoOccurrenceCombos:
           min_co_occurrence: 0.1
 
   CharsetDetector:
@@ -43,7 +43,7 @@ ParameterSelection:
         CharacterPairProbability:
           mean_crit_thresh: 0.7
     SpecificParams:
-      CharacterPairProbability:
+      CharacterPairProbabilityThresh:
         parameter_name: prob_thresh
         min: 0.0
         max: 0.9
@@ -60,7 +60,7 @@ ParameterSelection:
     Variables:
       PreFilter:
         Occurrence:
-          how: "less_than"
+          how: less_than
           thresh: 5
           rel: false
       Select:
@@ -71,9 +71,22 @@ ParameterSelection:
           season_planB: null #e.g. 24h - 86400s
           events_per_window: 0.25 # 0.5 for Apache, 0.25 for audit
           unique_events_per_window: true
-          operation: "mean"
+          operation: mean
     SpecificParams:
       EventFrequencyParams: {}
+
+  EventSequenceDetector:
+    Variables:
+      PreFilter:
+        Static: {}
+      Select:
+        Stable:
+          how: by_eventSequence
+          segment_threshs: [1.0, 0.165, 0.027, 0.005, 0.001]
+    SpecificParams:
+      EventSequenceLength:
+        parameter_name: seq_len
+
 
 Optimization:
   SampleSplit:
@@ -85,7 +98,7 @@ Optimization:
     fancy: true
     thresh_optimization:
       EntropyDetector:
-        name: prob_thresh
+        parameter_name: prob_thresh
         min: 0.0
         max: 0.9
         offset: -0.1

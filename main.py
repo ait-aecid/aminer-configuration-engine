@@ -2,7 +2,7 @@ import time
 import argparse
 import static_settings
 from lib.configUtils import *
-from lib.AminerConfigurationEngine import AminerConfigurationEngine as Ace
+from lib.AminerConfigurationEngine import AminerConfigurationEngine as ACE
 
 def get_args():
     """Returns command line arguments."""
@@ -23,29 +23,27 @@ def get_args():
     args.use_parsed_data = dict_bool.get(args.use_parsed_data.lower(), True)
     return args.__dict__
 
-def main(
-    params,
-    label="",
-):
+def main(params):
     """Main function of the configuration automation process for the AMiner."""
+    
     # initialize AminerConfigurationEngine
-    ace = Ace(params)
+    Ace = ACE(params)
 
     # run configuration methods
     print("\nConfiguring detectors ...")
     start = time.time()
-    analysis_config = ace.configure_detectors(ace.predefined_config)
+    analysis_config = Ace.configure_detectors(Ace.predefined_config)
     config_runtime = time.time()-start
     print(f"Configuration completed (runtime: {config_runtime}).\n")
 
-    # add trivial config parts
-    ace.config["LearnMode"] = True
-    ace.config["LogResourceList"] = [os.path.join(ace.current_dir, path) for path in ace.input_filepaths]
-    ace.config["Analysis"] = analysis_config
+    # add necessary parts to config
+    Ace.config["LearnMode"] = True
+    Ace.config["LogResourceList"] = [os.path.join(Ace.current_dir, path) for path in Ace.input_filepaths]
+    Ace.config["Analysis"] = analysis_config
 
     # save config
-    config_path = os.path.join(ace.output_dir, "config.yaml")
-    dump_config(config_path, ace.config)
+    config_path = os.path.join(Ace.output_dir, "config.yaml")
+    dump_config(config_path, Ace.config)
     print("Configuration file saved to:", config_path)
 
     return config_runtime

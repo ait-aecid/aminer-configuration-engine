@@ -7,7 +7,7 @@ warnings.filterwarnings("ignore")
 from scipy.signal import find_peaks
 import statsmodels.api as sm
 
-from lib.utils import *
+from lib.ParameterSelectionUtils import *
 
 class ParameterSelection:
     """This class handles the selection of parameters."""
@@ -15,38 +15,35 @@ class ParameterSelection:
     def __init__(self, df, settings={}):       
         self.df_original = df.copy()
         self.df = df.copy()
-        self.unique_values_per_variable = self.get_unique_values_number()
 
         # map meta-parameters to functions
-        mapping = {
+        mappings = {
             "Variables" : {
                 "Selected" : self.get_selected_variables,
                 "Occurrence" : self.get_variables_by_occurrence,
                 "Static" : self.get_static_variables,
                 "Random" : self.get_random_variables,
                 "Stable" : self.get_stable_variables,
-                "Numeric" : self.get_numeric_variables,
                 "CharacterPairProbability" : self.get_variables_by_charPairProb,
-                "Co-OccurrenceCombos" : self.get_combos_by_co_occurrence,
+                "CoOccurrenceCombos" : self.get_combos_by_co_occurrence,
                 "EventFrequency" : self.event_frequency_analysis,
             },
             "SpecificParams" : {
-                "CharacterPairProbability" : self.get_charPairProb_thresh,
+                "CharacterPairProbabilityThresh" : self.get_charPairProb_thresh,
                 "EventFrequencyParams": self.get_event_frequency_params,
+                "EventSequenceLength": self.get_event_sequence_length,
             }
         }
-        
-        #print(self.unique_values_per_variable)
 
         if settings: # if not empty
             # map meta-parameters to functions
             params = settings.copy()
             self.selected_vars = []
             v = "Variables"
-            for action in ["PreFilter", "PreSelect", "Select", "PostFilter"]: #TO-DO: implement "PostFilter"
+            for action in ["PreFilter", "PreSelect", "Select"]: #TO-DO: implement "PostFilter"
                 if action in settings[v].keys():
                     for method in settings[v][action].keys():
-                        variables = mapping[v][method](**settings[v][action][method])
+                        variables = mappings[v][method](**settings[v][action][method])
                         params[v][action][method] = variables
                         if action == "PreFilter":
                             self.df = self.df.drop(columns=variables)
@@ -57,7 +54,7 @@ class ParameterSelection:
             s = "SpecificParams"
             if s in settings.keys():
                 for method in settings[s].keys():
-                    specific_param = mapping[s][method](**settings[s][method])
+                    specific_param = mappings[s][method](**settings[s][method])
                     params[s][method] = specific_param
             self.params = params
 
@@ -255,16 +252,14 @@ class ParameterSelection:
         means = {key: np.mean(val) for key, val in self.critical_values.items()}
         selection = [key for key, val in means.items() if val >= mean_crit_thresh]
         return selection
-    
 
     def get_charPairProb_thresh(self, parameter_name="", min=0, max=1, offset=0.05):
         """Returns minimum of the probabilities of the character pairs for each variable."""
-        if not self.critical_values: # if not defined yet
-            self.critical_values = self.get_charPairProbs("all")
+        # if not self.critical_values: # if not defined yet
+        #     self.critical_values = self.get_charPairProbs("all")
         min_max_round = lambda x: float(round(np.min([np.max([np.max([np.min(x) + offset, 0]), min]), max]), 3))
         critical_values_min = {key : min_max_round(val) for key, val in self.critical_values.items()}
         return {parameter_name: critical_values_min}
-
 
     def get_selected_variables(self, paths="all"):
         if type(paths) == list:
@@ -277,152 +272,42 @@ class ParameterSelection:
         else:
             raise ValueError(f"Option '{paths}' not available.")
 
-
-    def get_unique_values_number(self):
-        """Get a dictionary with the count of individual match elements as values and paths as keys."""
-        return self.df.nunique().to_dict()
-
-
     def get_static_variables(self, thresh=1):
         """Get static variables of a dataframe."""
-        statics = [var for var in self.df.columns if self.unique_values_per_variable[var] <= thresh]
+        unique_values_count = get_unique_values_number(self.df)
+        statics = [var for var in self.df.columns if unique_values_count[var] <= thresh]
         return statics
 
-
-    def get_random_variables(self, thresh=3, min_value_occurrence=2):
+    def get_random_variables(self, min_value_occurrence=2):
         """Get variables that occurr randomly."""
         #randoms = [var for var in self.df.columns if self.unique_values_per_variable[var] >= len(self.df[var].dropna()) - thresh]
         randoms = []
         if min_value_occurrence > 0:
-            randoms += self.get_vars_with_random_values(min_value_occurrence)
+            randoms += get_vars_with_random_values(self.df, min_value_occurrence)
         return list(set(randoms))
-
-
-    def get_unique_occurrence_segment_means(df : pd.DataFrame, n_segments, how="by_occurrence"):
-        """Compute some measure of stability for each variable. Returns the means of each segment."""
-        op = lambda y: list(map(lambda x : np.mean(x) if len(x) > 0 else np.nan, y))
-        segments_per_var = {}
-        if how == "by_charset":
-            counts_dict = ParameterSelection.get_charset_length_evolution(df, relative=True)
-        elif how == "by_occurrence":
-            counts_dict = ParameterSelection.get_unique_occurrences(df, accumulated=False)
-        elif how == "by_valueRange":
-            counts_dict = ParameterSelection.numeric_range_evolution(df)
-        else:
-            raise ValueError(f"Option '{how}' not supported. Choose 'by_occurrence', 'by_charset' or 'by_valueRange'.")
-        for var, counts in zip(counts_dict.keys(), counts_dict.values()):
-            segments = np.array_split(counts, n_segments)
-            segment_means = op(segments)
-            segments_per_var[var] = segment_means
-        return segments_per_var
-
-    def get_unique_occurrences(df : pd.DataFrame, accumulated=False, uniques_given=None, return_uniques=False):
-        """Return a dictionary with variables as keys and the numbers of unique occurrences per occurrence (lists) as values."""
-
-        counts_dict = {}
-        uniques_dict = {}
-        for var in df.columns:
-            if return_uniques and uniques_given != None:
-                uniques = uniques_given[var]
-            else:
-                uniques = set()
-            counts = []
-            dense_df = df[var].dropna()
-            for val in dense_df:
-                if val not in uniques:
-                    uniques.add(val)
-                    counts.append(1)
-                else:
-                    counts.append(0)
-            uniques_dict[var] = uniques
-            if accumulated:
-                counts = np.cumsum(counts)
-            counts_dict[var] = counts
-        if return_uniques:
-            return counts_dict, uniques_dict
-        else:
-            return counts_dict
-        
     
-    def get_stable_variables(self, segment_threshs, how="by_occurrence", group_variables=False):
+    def get_stable_variables(self, segment_threshs=[1.0, 0.165, 0.027, 0.005, 0.001], how="by_occurrence", group_variables=False):
         """Returns the variables that were classifed as stable."""
-        is_unstable = lambda q_list : not all([not q >= thresh for q, thresh in zip(q_list, segment_threshs)])
-        segments = ParameterSelection.get_unique_occurrence_segment_means(self.df, len(segment_threshs), how)
-        stable_vars = [var for var in segments.keys() if not is_unstable(segments[var])]
+        # choose options
+        if how == "by_charset":
+            changes_dict = get_charset_length_evolution(self.df, relative=True)
+        elif how == "by_occurrence":
+            changes_dict = get_unique_occurrences(self.df, accumulated=False)
+        elif how == "by_valueRange":
+            changes_dict = get_numeric_range_evolution(self.df)
+        elif how == "by_eventSequence":
+            stable_vars_sequence_length_dict = get_stable_unique_sequence_evolution(self.df, segment_threshs, max_length=12)
+            self.event_sequence_lengths = stable_vars_sequence_length_dict
+            stable_vars = list(stable_vars_sequence_length_dict.keys())
+            return stable_vars
+        else:
+            raise ValueError(f"Option 'how={how}' not supported.")
+        stable_vars = [var for var in self.df.columns if is_stable(changes_dict[var], segment_threshs)]
         if group_variables:
-            return [stable_vars] # some detectors are to inefficient with too many instances
+            return [stable_vars]
         else:
             return stable_vars
-
-
-    def get_occurrences_per_value(df: pd.DataFrame):
-        """Return the number of occurrences per value for each variable."""
-        occurrences_per_value = {}
-        for var in df.columns:
-            dense_df = df[var].dropna()
-            val_count = {val : dense_df.eq(val).sum() for val in set(dense_df)}
-            occurrences_per_value[var] = val_count
-        return occurrences_per_value
-    
-
-    def get_vars_with_random_values(self, thresh=2):
-        """Returns variables that contain random values."""
-        randoms = []
-        occurrences_per_value = ParameterSelection.get_occurrences_per_value(self.df)
-        for var in occurrences_per_value.keys():
-            if occurrences_per_value[var]:
-                if min(occurrences_per_value[var].values()) < thresh:
-                    randoms.append(var)
-        return randoms
-    
-
-    def get_charset_length_evolution(df, by_occurrence=False, relative=False):
-        """Get the evolution of the length of the charsets of each variable."""
-        charset_lengths_dict = {}
-        for var in df.columns:
-            charset = set()
-            charset_lengths = [0]
-            for val in df[var]:
-                if pd.isna(val) and by_occurrence:
-                    continue
-                charset = charset.union(set(str(val)))
-                charset_lengths.append(len(charset))
-            if relative:
-                diffs = np.diff(charset_lengths, prepend=0)
-                charset_lengths_dict[var] = list(np.where(diffs != 0, 1, diffs))
-            else:
-                charset_lengths_dict[var] = charset_lengths
-        return charset_lengths_dict
-    
-    def get_numeric_variables(df):
-        """Returns the variables that can be converted to numeric type."""
-        numeric_variables = [var for var in df.columns if all(pd.to_numeric(df[var], errors="coerce").notna())]
-        return numeric_variables
-    
-    def numeric_range_evolution(df):
-        """Returns a dict of numeric variables as keys and lists as values whose are 1 if the min-max range was extended, 0 otherwise."""
-        numeric_vars = ParameterSelection.get_numeric_variables(df)
-        df_num = df[numeric_vars].astype(float)
-        range_ext_dict = {}
-        for var in df_num.columns:
-            range_extension = []
-            max_value, min_value = 0, 0
-            for val in df_num[var].dropna():
-                if val > max_value:
-                    max_value = val
-                    range_extension.append(1)
-                elif val < min_value:
-                    min_value = val
-                    range_extension.append(1)
-                else:
-                    range_extension.append(0)
-            range_ext_dict[var] = range_extension
-        return range_ext_dict
-
-    
-    def get_duplicates(arr: list):
-        """Returns the duplicates of a list."""
-        unique_elements, counts = np.unique(arr, return_counts=True)
-        duplicates = unique_elements[counts > 1]
-        return list(duplicates)
-    
+        
+    def get_event_sequence_length(self, parameter_name):
+        """Return event sequence lengths."""
+        return {parameter_name: self.event_sequence_lengths}

@@ -5,7 +5,8 @@ detector_id_dict = {
             "3" : "CharsetDetector",
             "4" : "EntropyDetector",
             "5" : "ValueRangeDetector",
-            "6" : "EventFrequencyDetector"
+            "6" : "EventFrequencyDetector",
+            "7" : "EventSequenceDetector"
         }
 
 # Define how the timestamps should be extracted for each parser. A new parser type requires a new definition.

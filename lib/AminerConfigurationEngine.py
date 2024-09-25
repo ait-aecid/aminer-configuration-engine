@@ -9,7 +9,7 @@ import importlib
 from tqdm import tqdm
 
 import static_settings
-from lib.utils import *
+from lib.ParameterSelectionUtils import *
 from lib.configUtils import *
 from lib.ParameterSelection import *
 from lib.Evaluation import *
@@ -177,7 +177,7 @@ class AminerConfigurationEngine(ParameterSelection):
         weighted_split=True,
         thresh_optimization={
             "EntropyDetector": {
-                "name": "prob_thresh",
+                "parameter_name": "prob_thresh",
                 "min": 0.01,
                 "max": 1,
                 "offset": -0.05,
@@ -192,7 +192,7 @@ class AminerConfigurationEngine(ParameterSelection):
             return analysis_config
         detectors_opt = list(set(detectors).intersection(set(self.detectors)))
         # extract thresh settings
-        thresh_names = [setting["name"] for setting in thresh_optimization.values()]
+        thresh_names = [setting["parameter_name"] for setting in thresh_optimization.values()]
         n_samples = len(X)
         fold_size = n_samples // (k+1)
         if fancy:
