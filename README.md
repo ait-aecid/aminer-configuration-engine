@@ -5,13 +5,17 @@ This code allows to generate configurations for the [logdata-anomaly-miner](http
 **Optimization is not yet working! (requires adaptations in AMiner - coming soon ...)**
 
 ## **Installation**
+Install the AMiner-Configuration-Engine from git:
+```bash
+git clone https://github.com/ait-aecid/aminer-configuration-engine
+```
 
+For the optimization to work we have to install the [AMiner](https://github.com/ait-aecid/logdata-anomaly-miner). Follow the link for instructions.
 
 ## **Execution**
 
-1. Drop relevant files into directory [data](data). The log data has to be of a single type (e.g. audit or ApacheAccess). The given sample data in [data](data) is from [AIT Log Data Set V2.0](https://zenodo.org/records/5789064) and should be removed before dropping new files. The 
+1. Drop relevant files into directory [data](data). The log data has to be of a single type (e.g. audit or ApacheAccess). The given sample data in directory [data](data) is Apache Access data from [AIT Log Data Set V2.0](https://zenodo.org/records/5789064) and should be removed before dropping new files. 
 2. Execute command:
-
 ```bash
 python3 main.py [-h] [-d DATA_DIR] [-p PARSER] [-pd USE_PARSED_DATA] [-id DETECTOR_IDS] [-o OPTIMIZE] [-pre PREDEFINED_CONFIG_PATH]
 ```
@@ -28,9 +32,9 @@ python3 main.py --help
 
 ## Add new meta-configuration for a detector:
 
-The [meta-configuration](meta-configuration.yaml) file contains the recipes for the detectors' configuration process and the settings for the optimization. The given settings were successfully tested and should be valid for different types of log data. Each detector recipe consists of a composition of one or more **configuration methods**. 
+The [meta-configuration](settings/meta-configuration.yaml) file contains the recipes for the detectors' configuration process and the settings for the optimization. The given settings were successfully tested and should be valid for different types of log data. Each detector recipe consists of a composition of one or more **configuration methods**. 
 
-Simply follow the same scheme to define a new meta-configuration for a detector and add it in [meta-configuration.yaml](meta-configuration.yaml) under "ParameterSelection":
+Simply follow the same scheme to define a new meta-configuration for a detector and add it in [meta-configuration.yaml](settings/meta-configuration.yaml) under "ParameterSelection":
 ```Yaml
 # define detector
 EntropyDetector:

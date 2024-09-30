@@ -8,11 +8,11 @@ import numpy as np
 import importlib
 from tqdm import tqdm
 
-import static_settings
+from settings.constants import DETECTOR_ID_DICT, TIMESTAMP_EXTRACTION_DICT
 from lib.ParameterSelectionUtils import *
 from lib.configUtils import *
 from lib.ParameterSelection import *
-from lib.Evaluation import *
+from lib.evaluation import *
 
 sys.path.append("/usr/lib/logdata-anomaly-miner")
 sys.path.append("/etc/aminer/conf-available/ait-lds")
@@ -27,8 +27,9 @@ class AminerConfigurationEngine(ParameterSelection):
     def __init__(self, params):
         """Initialize project. Returns parsed command line arguments."""
 
-        self.detector_id_dict = static_settings.detector_id_dict
-        self.file_type_info = static_settings.timestamp_extraction_dict
+        self.__dict__.update(params)
+        self.detector_id_dict = DETECTOR_ID_DICT
+        self.file_type_info = TIMESTAMP_EXTRACTION_DICT
         self.label = "TBA"
         self.predefined_config = None
 
@@ -36,26 +37,19 @@ class AminerConfigurationEngine(ParameterSelection):
         os.makedirs("tmp", exist_ok=True)
         os.makedirs(os.path.join("tmp", "data_parsed"), exist_ok=True)
 
-        # get command line arguments if no parameters are passed
-        if params == None:
-            self.set_and_get_args(False)
-        else:
-            self.__dict__.update(params)
-
         if self.predefined_config_path != None:
             self.predefined_config = load_yaml_file(self.predefined_config_path)
 
         self.detectors = [self.detector_id_dict[id] for id in self.detector_ids]
 
-        base_config = load_yaml_file("base_config.yml")
+        base_config = load_yaml_file("settings/base_config.yml")
         base_config["Parser"][0]["type"] = self.parser
         self.timestamp_variables = base_config["Input"]["timestamp_paths"]
 
         self.data_path = os.path.join("tmp", "current_data.log")
         start = time.time()
         self.df = self.get_data(save_to=self.data_path)
-        end = time.time()
-        print(f"Finished data extraction (runtime: {end-start}).")
+        print(f"Finished data extraction (runtime: {time.time() - start}).")
 
         self.init_output_dir()
 
@@ -64,7 +58,7 @@ class AminerConfigurationEngine(ParameterSelection):
         # define standard inputs and fill config dictionaries
         self.config = base_config.copy()
         self.timestamp_variables = base_config["Input"]["timestamp_paths"]
-        with open("meta-configuration.yaml", 'r') as yaml_file:
+        with open("settings/meta-configuration.yaml", 'r') as yaml_file:
             self.settings = yaml.safe_load(yaml_file)
 
 
@@ -187,9 +181,12 @@ class AminerConfigurationEngine(ParameterSelection):
     ):
         """Optimize the 'Analysis' part of a configuration."""
         os.system("sudo echo")
+        if detectors == "all":
+            detectors = list(DETECTOR_ID_DICT.values())
         # if no detectors specified
-        if len(set(detectors).intersection(set(self.detectors))) == 0:
+        elif isinstance(detectors, list) and len(set(detectors).intersection(set(self.detectors))) == 0:
             return analysis_config
+
         detectors_opt = list(set(detectors).intersection(set(self.detectors)))
         # extract thresh settings
         thresh_names = [setting["parameter_name"] for setting in thresh_optimization.values()]
@@ -329,19 +326,6 @@ class AminerConfigurationEngine(ParameterSelection):
             with open(path, "r") as f:
                 n_lines[file] = sum(1 for _ in f) # get number of lines for offset
         return n_lines, start_timestamps
-    
-    def set_and_get_args(self, print_args=True):
-        """Configures argument parser and returns command line arguments."""
-        parser = argparse.ArgumentParser(description="Automation process for the AMiner.")
-        parser.add_argument("-D", "--dataset", type=str, default="russellmitchell", help="Name of dataset.")
-        parser.add_argument("-P", "--parser", type=str, default="AuditdParsingModel", help="Type of parser.")
-        parser.add_argument("-ts", "--train_splits", type=int, default=1, help="Number of training splits.")
-        parser.add_argument("-ms", "--max_training_samples", type=int, default=None, help="Max. number of training samples.")
-        parser.add_argument("-id", "--detector_ids", type=str, default="1", help=str(self.detector_id_dict))
-        args = parser.parse_args()
-        self.__dict__.update(args.__dict__)
-        if print_args:
-            print(args)
 
     def init_output_dir(self):
         """Initialize output dir."""

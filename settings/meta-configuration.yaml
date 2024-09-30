@@ -18,7 +18,7 @@ ParameterSelection:
       PreFilter:
         Static: {}
         Random: {}
-        Occurrence:
+        MinMaxOccurrence:
           how: less_than
           thresh: 0.005
       Select:
@@ -58,12 +58,12 @@ ParameterSelection:
   EventFrequencyDetector:
     Variables:
       PreFilter:
-        Occurrence:
+        MinMaxOccurrence:
           how: less_than
           thresh: 5
           rel: false
       Select:
-        EventFrequency:
+        EventFrequencyAnalysis:
           season_min_autocorrelation: 0
           season_min_reps: 3
           season_variation_coeff: 0.1
@@ -90,7 +90,7 @@ ParameterSelection:
 Optimization:
   SampleSplit:
     k: 3
-    detectors: [NewMatchPathValueDetector, NewMatchPathValueComboDetector, EntropyDetector, CharsetDetector, ValueRangeDetector, EventFrequencyDetector]
+    detectors: all # or specify detectors e.g. detectors: [NewMatchPathValueDetector, NewMatchPathValueComboDetector]
     max_FP: 10
     max_FP_per_minute: 0.05
     weighted_split: true
