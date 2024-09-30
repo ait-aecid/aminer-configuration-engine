@@ -296,7 +296,8 @@ class ParameterSelection:
         elif how == "by_valueRange":
             changes_dict = get_numeric_range_evolution(self.df)
         elif how == "by_eventSequence":
-            stable_vars_sequence_length_dict = get_stable_unique_sequence_evolution(self.df, segment_threshs, max_length=12)
+            stable_vars_sequence_length_dict = get_stable_unique_sequence_evolution(self.df, segment_threshs)
+            stable_vars_sequence_length_dict.update(get_stable_unique_sequence_evolution(self.df, segment_threshs, full_paths_list=True))
             self.event_sequence_lengths = stable_vars_sequence_length_dict
             stable_vars = list(stable_vars_sequence_length_dict.keys())
             return stable_vars

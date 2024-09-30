@@ -289,10 +289,10 @@ class AminerConfigurationEngine(ParameterSelection):
         # give a id if no id is given
         for i, instance in enumerate(detector_config):
             if "persistence_id" not in instance.keys():
-                instance["persistence_id"] = f"noName_id_{i}"
+                instance["persistence_id"] = f"instance_id_{i}"
                 detector_config[i] = instance
             if "id" not in instance.keys():
-                instance["id"] = f"noName_id_{i}"
+                instance["id"] = f"instance_id_{i}"
                 detector_config[i] = instance
 
         if len(detector_config) > 0 and self.optimize:

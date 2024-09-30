@@ -45,18 +45,24 @@ def assemble_detector(detector: str, params: dict) -> list:
                 continue
             else:
                 used_variables.add(variable)
-            
+
+            # exception for EFD
             paths_str = "paths"
             if detector == "EventFrequencyDetector":
                 paths_str = "constraint_list"
 
+            # define instance
+            identifier = f"{detector}_{method}_id{i}"
             instance = {
                 "type": detector,
-                "id" : f"{detector}_{method}_id{i}",
-                "persistence_id" : f"id{i}_{method}",
+                "id" : identifier,
+                "persistence_id" : identifier,
                 paths_str: paths,
                 "output_logline": True,
             }
+            # remove 'paths' if the variable is 'None'
+            if pd.isna(variable):
+                instance.pop(paths_str, None)
             # add specific parameters
             if "SpecificParams" in params.keys():
                 specific_params = {}

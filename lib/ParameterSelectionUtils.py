@@ -202,33 +202,41 @@ def is_stable(changes_list, segment_threshs):
     segment_means = op(segments)
     return all([not q >= thresh for q, thresh in zip(segment_means, segment_threshs)])
 
-def get_unique_sequence_evolution(df, sequence_length=2, diff=True):
-    """Get the evolution of unique sequences."""
+def get_unique_sequence_evolution(df, sequence_length=2, diff=True, full_paths_list=False):
+    """Get the evolution of unique sequences in a DataFrame over time."""
     unique_sequences_evolution = {}
-    for var in df.columns:
-        events = df[var].values
+    # take full paths list if true
+    iteration_list = df.columns if not full_paths_list else [None]
+    # variable 'None' corresponds to full paths list
+    for var in iteration_list:
+        if not full_paths_list:
+            events = df[var].values
+        else:
+            # get full paths list
+            events = [tuple(df.loc[i].dropna().index) for i in range(len(df))]
         n_events = len(events)
         if n_events < sequence_length:
             continue
         sequences = set()
-        unique_sequence_count = np.zeros(n_events - sequence_length, dtype=int)  # Pre-allocate array
+        unique_sequence_count = np.zeros(n_events - sequence_length, dtype=int)
         for i in range(n_events - sequence_length):
-            sequence = tuple(events[i:i + sequence_length])  # Create a tuple as the sequence
-            unique_sequence_count[i] = len(sequences)  # Record the count of unique sequences so far
+            sequence = tuple(events[i:i + sequence_length]) 
+            unique_sequence_count[i] = len(sequences)
             sequences.add(sequence)
         unique_sequences_evolution[var] = np.diff(unique_sequence_count, prepend=0) if diff else unique_sequence_count
     return unique_sequences_evolution
 
-def get_stable_unique_sequence_evolution(df, segment_threshs, max_length=10):
+def get_stable_unique_sequence_evolution(df, segment_threshs, max_length=10, full_paths_list=False):
     """Get the variables and the largest lengths for which they are stable by the evolution of unique sequences."""
     df_ = df.copy()
     stable_vars_lengths = {}
     for length in range(2, max_length):
-        unique_sequence_evo = get_unique_sequence_evolution(df_, length)
-        stable_vars = [var for var in df_.columns if is_stable(unique_sequence_evo[var], segment_threshs)]
+        # takes the full paths list instead of variables if 'full_paths_list' == True
+        unique_sequence_evo = get_unique_sequence_evolution(df_, length, full_paths_list=full_paths_list)
+        stable_vars = [var for var in unique_sequence_evo.keys() if is_stable(unique_sequence_evo[var], segment_threshs)]
         if len(stable_vars) == 0:
             break
         stable_vars_dict = {key: int(val) for key, val in zip(stable_vars, np.full(len(stable_vars), length))}
         stable_vars_lengths.update(stable_vars_dict)
-        df_ = df_[stable_vars]
+        df_ = df_[stable_vars] if not full_paths_list else df_
     return stable_vars_lengths
