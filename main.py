@@ -6,9 +6,20 @@ from lib.AminerConfigurationEngine import AminerConfigurationEngine as ACE
 
 def get_args():
     """Returns command line arguments."""
-    parser = argparse.ArgumentParser(description=
-        """AMiner-Configuration-Engine: Drop relevant files (of same log data type) into directory data/ and execute command."""
-    )
+    help_message = """ 
+    AMiner-Configuration-Engine
+                                                                                                                                   
+       (                   (                                          )                                                                     
+       )\                  )\ )   (    (  (      (    (        )   ( /(   (                        (             (  (    (              (   
+     (((_)    (     (     (()/(   )\   )\))(    ))\   )(    ( /(   )\())  )\    (     (            )\     (      )\))(   )\    (       ))\  
+     )\___    )\    )\ )   /(_)) ((_) ((_))\   /((_) (()\   )(_)) (_))/  ((_)   )\    )\ )        ((_)    )\ )  ((_))\  ((_)   )\ )   /((_) 
+    ((/ __|  ((_)  _(_/(  (_) _|  (_)  (()(_) (_))(   ((_) ((_)_  | |_    (_)  ((_)  _(_/(   ___  | __|  _(_/(   (()(_)  (_)  _(_/(  (_))   
+     | (__  / _ \ | ' \))  |  _|  | | / _` |  | || | | '_| / _` | |  _|   | | / _ \ | ' \)) |___| | _|  | ' \)) / _` |   | | | ' \)) / -_)  
+      \___| \___/ |_||_|   |_|    |_| \__, |   \_,_| |_|   \__,_|  \__|   |_| \___/ |_||_|        |___| |_||_|  \__, |   |_| |_||_|  \___|  
+                                      |___/                                                                     |___/                       
+
+    Drop relevant files (of same log data type) into directory data/ and execute command."""
+    parser = argparse.ArgumentParser(description=help_message, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("-d", "--data_dir", type=str, default="/data", help="Directory with data files. All log files in folder will be used as training data.")
     parser.add_argument("-p", "--parser", type=str, default="AuditdParsingModel", help="Type of parser.")
     parser.add_argument("-pd", "--use_parsed_data", type=str, default="true", help="Use already parsed data if data was previsouly parsed? Parsed data is saved temporarily in /tmp.")
