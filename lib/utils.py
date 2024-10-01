@@ -27,7 +27,6 @@ def dump_config(filename : str, configuration : dict):
 
 def assemble_detector(detector: str, params: dict) -> list:
     """Assemble the configuration of a detector."""
-
     instance_list = []
     used_variables = set()
     filter_list = []
@@ -77,13 +76,11 @@ def assemble_detector(detector: str, params: dict) -> list:
 
 def adapt_predefined_analysis_config(analysis_config, detectors, df, print_deleted=False):
     """Adapt a predefined analysis config by filtering instances that were not specified or contain variables that are not given in the data."""
-
     allowed_items=["type","id","paths","persistence_id","output_logline", "season", "num_windows", "confidence_factor", "window_size", "prob_thresh"]
     adapted_config = []
     deleted_items = {"types": [], "paths": []}
     remaining_types = []
     remaining_paths = []
-
     conf = analysis_config.copy()
     for item in conf:
         if item["type"] not in detectors:
@@ -100,3 +97,10 @@ def adapt_predefined_analysis_config(analysis_config, detectors, df, print_delet
         print(f"Remaining types: {remaining_types}")
         print(f"Remaining paths: {remaining_paths}")
     return adapted_config
+
+def concatenate_files(input_files, output_file):
+    """Concatenate multiple files into one file."""
+    with open(output_file, 'w') as outfile:
+        for input_file in input_files:
+            with open(input_file, 'r') as infile:
+                outfile.write(infile.read())

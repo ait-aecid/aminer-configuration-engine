@@ -24,7 +24,6 @@ class ParameterSelection(
     def __init__(self, df, settings={}):       
         self.df_original = df.copy()
         self.df = df.copy()
-
         # map meta-parameters to functions
         mappings = {
             "Variables" : {
@@ -58,7 +57,6 @@ class ParameterSelection(
                         elif action == "PreSelect":
                             flattened_vars = [i for sublist in variables for i in sublist] if type(variables[0]) == list else variables
                             self.df = self.df[flattened_vars]
-                            
             s = "SpecificParams"
             if s in settings.keys():
                 for method in settings[s].keys():
