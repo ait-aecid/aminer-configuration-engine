@@ -1,0 +1,3 @@
+[submodule "log-preprocessor"]
+	path = log-preprocessor
+	url = https://github.com/ait-aecid/log-preprocessor.git
