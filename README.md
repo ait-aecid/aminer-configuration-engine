@@ -5,17 +5,18 @@ This code allows to generate configurations for the [logdata-anomaly-miner](http
 **Optimization is not yet working! (requires adaptations in AMiner - coming soon ...)**
 
 ## **Installation**
+At first we have to install the [AMiner](https://github.com/ait-aecid/logdata-anomaly-miner). Follow the link for instructions.
+
 Install the AMiner-Configuration-Engine from git:
 ```bash
 git clone https://github.com/ait-aecid/aminer-configuration-engine
 ```
 
-For the optimization to work we have to install the [AMiner](https://github.com/ait-aecid/logdata-anomaly-miner). Follow the link for instructions.
 
 ## **Execution**
 
 1. Drop relevant files into directory [data](data). The log data has to be of a single type (e.g. audit or ApacheAccess). The given sample data in directory [data](data) is Apache Access data from [AIT Log Data Set V2.0](https://zenodo.org/records/5789064) and should be removed before dropping new files. 
-2. Execute command:
+2. Execute command (from within the directory):
 ```bash
 python3 main.py [-h] [-d DATA_DIR] [-p PARSER] [-pd USE_PARSED_DATA] [-id DETECTOR_IDS] [-o OPTIMIZE] [-pre PREDEFINED_CONFIG_PATH]
 ```
