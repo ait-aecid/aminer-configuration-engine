@@ -1,9 +1,14 @@
 import time
 import argparse
 import os
-from settings.constants import DETECTOR_ID_DICT, HELP_MESSAGE
+from settings.constants import HELP_MESSAGE
 from lib.utils import *
 from lib.ConfigurationEngine import ConfigurationEngine
+
+# import from submodule
+import sys
+sys.path.append('log-preprocessor')
+from utils.constants import *
 
 def get_args():
     """Returns command line arguments."""

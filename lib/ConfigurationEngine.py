@@ -6,7 +6,6 @@ import time
 import importlib
 
 # custom imports
-from settings.constants import DETECTOR_ID_DICT, TIMESTAMP_EXTRACTION_DICT
 from lib.utils import *
 from lib.Optimization import Optimization
 
@@ -14,13 +13,7 @@ from lib.Optimization import Optimization
 import sys
 sys.path.append('log-preprocessor')
 from Data import Data
-
-sys.path.append("/usr/lib/logdata-anomaly-miner")
-sys.path.append("/etc/aminer/conf-available/ait-lds")
-from aminer.parsing.MatchElement import MatchElement
-from aminer.parsing.MatchContext import MatchContext
-from aminer.input.LogAtom import LogAtom
-from aminer.parsing.ParserMatch import ParserMatch
+from utils.constants import *
 
 class ConfigurationEngine(Optimization):
     """This class contains all the functionality that is required for the initialization of this project."""
@@ -30,7 +23,6 @@ class ConfigurationEngine(Optimization):
 
         self.__dict__.update(params)
         self.detector_id_dict = DETECTOR_ID_DICT
-        self.file_type_info = TIMESTAMP_EXTRACTION_DICT
         self.label = "TBA"
         self.predefined_config = None
 

@@ -5,8 +5,12 @@ import json
 import shutil
 from tqdm import tqdm
 
+# import from submodule
+import sys
+sys.path.append('log-preprocessor')
+from utils.constants import *
+
 from lib.utils import *
-from settings.constants import DETECTOR_ID_DICT
 
 def copy_and_save_file(input_file, output_file, line_numbers):
     """Write specified lines of the input file into the output file."""
