@@ -15,7 +15,7 @@ def get_args():
     parser = argparse.ArgumentParser(description=HELP_MESSAGE, formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("-d", "--data_dir", type=str, default="/data", help="Directory with data files. All log files in folder will be used as training data.")
     parser.add_argument("-p", "--parser_name", type=str, default="AuditdParsingModel", help="Type of parser.")
-    parser.add_argument("-pd", "--use_parsed_data", type=str, default="true", help="Use already parsed data if data was previsouly parsed? Parsed data is saved temporarily in /tmp.")
+    parser.add_argument("-pd", "--use_parsed_data", type=str, default="true", help="Use already parsed data if same data was previsouly parsed? Parsed data is saved temporarily in /tmp.")
     detector_help = f"Choose which detectors to be optimized by their ID (e.g., '1,3' means detectors with IDs 1 and 3): {str(DETECTOR_ID_DICT)}"
     parser.add_argument("-id", "--detector_ids", type=str, default="1,2,3,4,5,6,7", help=detector_help)
     parser.add_argument("-o", "--optimize", type=str, default="true", help="Optimize detectors?")
