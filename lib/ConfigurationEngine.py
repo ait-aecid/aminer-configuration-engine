@@ -47,9 +47,11 @@ class ConfigurationEngine(Optimization):
             self.data_dir,
             self.parser_name,
             self.config["Input"]["timestamp_paths"],
-            tpm_save_path=self.data_path
+            tmp_save_path=self.data_path
         )
-        self.df = data.get_df()
+        self.df = data.get_df(self.use_parsed_data)
+        print(self.df.columns)
+        print(len(self.df))
         print(f"Finished data extraction (runtime: {time.time() - start}).")
         self.input_filepaths = data.input_filepaths
 
