@@ -7,7 +7,7 @@ from lib.ConfigurationEngine import ConfigurationEngine
 
 # import from submodule
 import sys
-sys.path.append('log-preprocessor')
+sys.path.append('log-preproconfiguratorssor')
 from utils.constants import *
 
 def get_args():
@@ -28,26 +28,26 @@ def get_args():
     return args.__dict__
 
 def main(params):
-    """Main function of the configuration automation process for the AMiner."""
+    """Main function of the configuration automation proconfiguratorss for the AMiner."""
     
     # initialize AminerConfigurationEngine
-    Ce = ConfigurationEngine(params)
+    configurator = ConfigurationEngine(params)
 
     # run configuration methods
     print("\nConfiguring detectors ...")
     start = time.time()
-    analysis_config = Ce.configure_detectors(Ce.predefined_config)
+    analysis_config = configurator.configure_detectors(configurator.predefined_config)
     config_runtime = time.time()-start
     print(f"Configuration completed (runtime: {config_runtime}).\n")
 
-    # add necessary parts to config
-    Ce.config["LearnMode"] = True
-    Ce.config["LogResourceList"] = [os.path.join(Ce.current_dir, path) for path in Ce.input_filepaths]
-    Ce.config["Analysis"] = analysis_config
+    # add neconfiguratorssary parts to config
+    configurator.config["LearnMode"] = True
+    configurator.config["LogResourconfiguratorList"] = [os.path.join(configurator.current_dir, path) for path in configurator.input_filepaths]
+    configurator.config["Analysis"] = analysis_config
 
     # save config
-    config_path = os.path.join(Ce.output_dir, "config.yaml")
-    dump_config(config_path, Ce.config)
+    config_path = os.path.join(configurator.output_dir, "config.yaml")
+    dump_config(config_path, configurator.config)
     print("Configuration file saved to:", config_path)
 
 

@@ -13,7 +13,7 @@ from lib.Optimization import Optimization
 import sys
 sys.path.append('log-preprocessor')
 from Data import Data
-from utils.constants import *
+from utils.constants import DETECTOR_ID_DICT, POSSIBLE_TIMESTAMP_PATHS
 
 class ConfigurationEngine(Optimization):
     """This class contains all the functionality that is required for the initialization of this project."""
@@ -22,39 +22,34 @@ class ConfigurationEngine(Optimization):
         """Initialize project. Returns parsed command line arguments."""
 
         self.__dict__.update(params)
-        self.detector_id_dict = DETECTOR_ID_DICT
-        self.label = "TBA"
-        self.predefined_config = None
-
-        # create tmp directory
-        os.makedirs("tmp", exist_ok=True)
+        os.makedirs("tmp", exist_ok=True) # create tmp directory
         os.makedirs(os.path.join("tmp", "data_parsed"), exist_ok=True)
-        self.data_path = os.path.join("tmp", "current_data.log")
-        # if a predefined config was passed load it and just optimize it - see optimization
-        if self.predefined_config_path != None:
-            self.predefined_config = load_yaml_file(self.predefined_config_path)
-        # get the detector names from their ids
-        self.detectors = [self.detector_id_dict[id] for id in self.detector_ids.split(",")]
+        self.tmp_save_path = os.path.join("tmp", "current_data.log")
+        self.detectors = [DETECTOR_ID_DICT[id] for id in self.detector_ids.split(",")]
+        # get the data
+        start = time.time()
+        data = Data(
+            self.data_dir,
+            self.parser_name,
+            POSSIBLE_TIMESTAMP_PATHS,
+            tmp_save_path=self.tmp_save_path
+        )
+        self.df = data.get_df(self.use_parsed_data)
+        self.input_filepaths = data.input_filepaths
+        print(f"Finished data extraction (runtime: {time.time() - start}).")
+        
+        self.init_output_dir()
+        self.current_dir = "file://" + os.getcwd()
+
         # load base config
         self.config = load_yaml_file("settings/base_config.yml")
         self.config["Parser"][0]["type"] = self.parser_name
         with open("settings/meta-configuration.yaml", 'r') as yaml_file:
             self.settings = yaml.safe_load(yaml_file)
 
-        # get the data
-        start = time.time()
-        data = Data(
-            self.data_dir,
-            self.parser_name,
-            self.config["Input"]["timestamp_paths"],
-            tmp_save_path=self.data_path
-        )
-        self.df = data.get_df(self.use_parsed_data)
-        print(f"Finished data extraction (runtime: {time.time() - start}).")
-        self.input_filepaths = data.input_filepaths
-
-        self.init_output_dir()
-        self.current_dir = "file://" + os.getcwd()
+        # if a predefined config was passed load it and just optimize it - see optimization
+        if self.predefined_config_path != None:
+            self.predefined_config = load_yaml_file(self.predefined_config_path)
 
     def configure_detectors(self, predefined_config=None) -> list:
         """Configure detectors and return their configurations as dictionaries in a list."""
