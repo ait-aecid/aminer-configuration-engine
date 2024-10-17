@@ -3,7 +3,8 @@ import os
 import pandas as pd
 import sys
 import time
-import importlib
+import time
+from typing import Optional
 
 # custom imports
 from lib.utils import *
@@ -12,34 +13,42 @@ from lib.Optimization import Optimization
 # import from submodule
 import sys
 sys.path.append('log-preprocessor')
-from Data import Data
-from utils.constants import DETECTOR_ID_DICT, POSSIBLE_TIMESTAMP_PATHS
+from LogData import LogData
+from utils.constants import DETECTOR_ID_DICT
 
 class ConfigurationEngine(Optimization):
     """This class contains all the functionality that is required for the initialization of this project."""
 
-    def __init__(self, params: dict):
+    def __init__(
+            self,
+            data_dir: str,
+            parser_name: str,
+            detector_ids="1,2,3,4,5,6,7",
+            optimize=True,
+            predefined_config_path: Optional[str]=None,
+            use_parsed_data=True,
+            tmp_save_path="/tmp/current_data.log"
+        ):
         """Initialize project. Returns parsed command line arguments."""
+        self.data_dir = data_dir
+        self.parser_name = parser_name
+        self.optimize = optimize
+        self.predefined_config_path = predefined_config_path
 
-        self.__dict__.update(params)
-        os.makedirs("tmp", exist_ok=True) # create tmp directory
-        os.makedirs(os.path.join("tmp", "data_parsed"), exist_ok=True)
-        self.tmp_save_path = os.path.join("tmp", "current_data.log")
-        self.detectors = [DETECTOR_ID_DICT[id] for id in self.detector_ids.split(",")]
+        self.tmp_save_path = tmp_save_path
+        self.detectors = [DETECTOR_ID_DICT[id] for id in detector_ids.split(",")]
         # get the data
         start = time.time()
-        data = Data(
+        data = LogData(
             self.data_dir,
             self.parser_name,
-            POSSIBLE_TIMESTAMP_PATHS,
             tmp_save_path=self.tmp_save_path
         )
-        self.df = data.get_df(self.use_parsed_data)
+        self.df = data.get_df(use_parsed_data)
         self.input_filepaths = data.input_filepaths
         print(f"Finished data extraction (runtime: {time.time() - start}).")
         
         self.init_output_dir()
-        self.current_dir = "file://" + os.getcwd()
 
         # load base config
         self.config = load_yaml_file("settings/base_config.yml")
@@ -48,15 +57,19 @@ class ConfigurationEngine(Optimization):
             self.settings = yaml.safe_load(yaml_file)
 
         # if a predefined config was passed load it and just optimize it - see optimization
+        self.predefined_config = None
         if self.predefined_config_path != None:
             self.predefined_config = load_yaml_file(self.predefined_config_path)
 
-    def configure_detectors(self, predefined_config=None) -> list:
+    def configure_detectors(self, predefined_config=None, print_progress=True) -> list:
         """Configure detectors and return their configurations as dictionaries in a list."""
+        start = time.time()
         df = self.df.copy()
         detector_config = []
         if predefined_config == None:
             for current_detector in self.detectors:
+                if print_progress:
+                    print(f"Configuring {current_detector} ...")
                 if current_detector != "EventFrequencyDetector": # TO-DO: should be handled in meta-config
                     current_df = df.drop(columns="ts")
                 else:
@@ -82,15 +95,30 @@ class ConfigurationEngine(Optimization):
                     print("Optimization leads to empty configuration. Original config. is used.")
                 else: 
                     detector_config = optimized_config
+        if print_progress:
+            print(f"Configuration completed (runtime: {time.time() - start}).\n")
         return detector_config
 
     def init_output_dir(self):
         """Initialize output directory."""
         if self.predefined_config_path!=None:
-            prefix = self.predefined_config_path.split(".")[0].split("/")[-1]
+            prefix = self.predefined_config_path.split("/")[-1]
         else:
             prefix = "CE"
-        self.result_label = f"{prefix}_S{str(len(self.df))}"
+        self.result_label = f"{prefix}_{str(len(self.df))}_samples"
         self.output_dir = os.path.join("output", '_'.join(self.detectors), self.parser_name, self.result_label)
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "optimization"), exist_ok=True)
+    
+    def create_config(self):
+        """Create the configuration file."""
+        analysis_config = self.configure_detectors(self.predefined_config)
+        # add necessary parts to config
+        self.config["LearnMode"] = True
+        self.config["LogResourceList"] = [os.path.join("file://" + os.getcwd(), path) for path in self.input_filepaths]
+        self.config["Analysis"] = analysis_config
+        # save config
+        config_path = os.path.join(self.output_dir, "config.yaml")
+        dump_config(config_path, self.config)
+        print("Configuration file saved to:", config_path)
+        return self.config

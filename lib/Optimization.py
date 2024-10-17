@@ -66,9 +66,9 @@ class Optimization:
         copy_and_save_file(self.data_path, outputfile, list(X.index))
         # run AMiner
         if training:
-            command = f"sudo aminer -C -o -c " + config_path
+            command = "sudo aminer -C -o -c " + config_path
         else:
-            command = f"sudo aminer -o -c " + config_path
+            command = "sudo aminer -o -c " + config_path
         os.system(command)
 
     def optimization(
