@@ -10,6 +10,7 @@ At first we have to install the [AMiner](https://github.com/ait-aecid/logdata-an
 Install the AMiner-Configuration-Engine from git:
 ```bash
 git clone https://github.com/ait-aecid/aminer-configuration-engine
+git submodule update --init
 ```
 
 

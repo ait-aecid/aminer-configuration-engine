@@ -2,15 +2,6 @@ import yaml
 import pandas as pd
 from lib.ParameterSelection import *
 
-def flatten_dict(d: dict) -> list:
-    values = []
-    for value in d.values():
-        if isinstance(value, dict):
-            values.extend(flatten_dict(value))
-        elif isinstance(value, list):
-            values.extend(value)
-    return values
-
 def load_yaml_file(file_path):
     """Load .yaml file into a dictionary."""
     with open(file_path, 'r') as file:
@@ -97,10 +88,3 @@ def adapt_predefined_analysis_config(analysis_config, detectors, df, print_delet
         print(f"Remaining types: {remaining_types}")
         print(f"Remaining paths: {remaining_paths}")
     return adapted_config
-
-def concatenate_files(input_files, output_file):
-    """Concatenate multiple files into one file."""
-    with open(output_file, 'w') as outfile:
-        for input_file in input_files:
-            with open(input_file, 'r') as infile:
-                outfile.write(infile.read())
