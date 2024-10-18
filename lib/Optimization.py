@@ -1,79 +1,37 @@
 import os
 import pandas as pd
 import numpy as np
-import json
-import shutil
+import getpass
 from tqdm import tqdm
 
 # import from submodule
 import sys
 sys.path.append('log-preprocessor')
 from utils.constants import *
+from tools.AMinerModel import AMinerModel
 
 from lib.utils import *
 
-def copy_and_save_file(input_file, output_file, line_numbers):
-    """Write specified lines of the input file into the output file."""
-    with open(input_file, 'r') as infile, open(output_file, 'w') as outfile:
-        lines = infile.readlines()
-        for line_number in line_numbers:
-            if 0 <= line_number < len(lines):
-                outfile.write(lines[line_number])
-
-def get_results_file(filename='/tmp/aminer_out.json', save=False, save_to="tmp/aminer_out.json"):
-    """Get output file that was generated from running the AMiner. JSON format is expected ('pretty=false')."""
-    data = []
-    with open(filename, 'r') as file:
-        for line in file:
-            data.append(json.loads(line))
-    if save:
-        shutil.copy(filename, save_to)
-    return data
-        
-def get_relevant_info(detectors) -> dict:
-    """Returns detector type, id of the triggered instance, line index, timestamp and variable(s) for each alert."""
-    results = get_results_file()
-    info = []
-    for detector in detectors:
-        for i in range(len(results)):
-            if results[i]['AnalysisComponent']["AnalysisComponentType"].startswith(detector):
-                var = results[i]['AnalysisComponent']["AffectedLogAtomPaths"]
-                idx = results[i]["LineNumber"]
-                ts = pd.to_datetime(results[i]['LogData']["Timestamps"], unit="s")
-                crit = results[i]['AnalysisComponent']["CriticalValue"] if "CriticalValue" in results[i]['AnalysisComponent'].keys() else None
-                id = results[i]['AnalysisComponent']["AnalysisComponentName"]
-                info.append({"detector":detector, "id":id, "var":var, "idx":idx, "ts":ts, "crit":crit})
-    return pd.DataFrame(info, columns=["detector", "id", "var", "idx", "ts", "crit"])
-
+def in_jupyter_notebook():
+    """Check if the function was called from within a jupyter notebook."""
+    try:
+        # Check if the get_ipython function exists (unique to IPython environments)
+        from IPython import get_ipython
+        ipy_instance = get_ipython()
+        if ipy_instance and 'IPKernelApp' in ipy_instance.config:
+            return True
+        else:
+            return False
+    except ImportError:
+        # IPython is not installed, likely not running in a Jupyter notebook
+        return False
 
 class Optimization:
+    """This class contains the functionality for optimizing configuration files."""
 
-    def aminer_run(self, X, analysis_config, training: bool, label: str, optimization_run=False):
-        """Fit AMiner to training data and predict test data."""
-        if optimization_run:
-            opt_dir = "optimization/"
-        else:
-            opt_dir = ""
-        outputfile = os.path.join(self.output_dir, opt_dir, label + "_data.log")
-        config_path = os.path.join(self.output_dir, opt_dir, label + "_config.yaml")
-        # update config
-        self.config["LearnMode"] = training
-        self.config["LogResourceList"] = [os.path.join(self.current_dir, self.data_path)]
-        self.config["Analysis"] = analysis_config
-        # save config file
-        dump_config(config_path, self.config)
-        # save data for aminer
-        copy_and_save_file(self.data_path, outputfile, list(X.index))
-        # run AMiner
-        if training:
-            command = "sudo aminer -C -o -c " + config_path
-        else:
-            command = "sudo aminer -o -c " + config_path
-        os.system(command)
-
-    def optimization(
+    def optimize_config(
         self, 
-        X: pd.DataFrame, 
+        df: pd.DataFrame, 
         analysis_config: list, 
         detectors: list,
         k=5, 
@@ -92,19 +50,27 @@ class Optimization:
         fancy=True
     ):
         """Optimize the 'Analysis' part of a configuration."""
-        os.system("sudo echo")
+        pwd=None
+        if in_jupyter_notebook():
+            print("(running in Jupyter notebook)")
+            if pwd is None:
+                pwd = getpass.getpass("Execution in jupyter notebook requires sudo password:")
+            os.system(f"echo {pwd} | sudo -S echo -n")
+        else:
+            os.system("sudo echo -n")
         if detectors == "all":
             detectors = list(DETECTOR_ID_DICT.values())
         # if no detectors specified
         elif isinstance(detectors, list) and len(set(detectors).intersection(set(self.detectors))) == 0:
+            print("No detectors specified for optimization. Returning original configuration.")
             return analysis_config
         detectors_opt = list(set(detectors).intersection(set(self.detectors)))
         # extract thresh settings
         thresh_names = [setting["parameter_name"] for setting in thresh_optimization.values()]
-        n_samples = len(X)
+        n_samples = len(df)
         fold_size = n_samples // (k+1)
         if fancy:
-            splits = tqdm(range(1,k+1), desc='Optimizing configuration', unit='iteration', ncols=100)
+            splits = tqdm(range(1,k+1), desc='Optimizing configuration', unit='data split', ncols=100)
         else:
             splits = range(1,k+1)
         # remove unspecified detectors from config
@@ -116,18 +82,23 @@ class Optimization:
         fp_per_minute_dict = {key: [] for key in all_ids}
         crit_min_dict = {key: [] for key in all_ids}
         for i in splits:
-            label = str(i)
             start, end = i * fold_size, (i + 1) * fold_size
-            X_train = pd.concat([X.iloc[:start]])
-            X_test = X.iloc[start:end]
-            split_sizes.append(len(X_train))
-            # RUN AMINER
-            self.aminer_run(X_train, opt_config, True, "train" + label, optimization_run=True)
-            self.aminer_run(X_test, opt_config, False, "test" + label, optimization_run=True)
-            # get results and extract relevant infos
-            info = get_relevant_info(detectors)
+            df_train = pd.concat([df.iloc[:start]])
+            df_test = df.iloc[start:end]
+            split_sizes.append(len(df_train))
+            opt_config = self.config.copy()
+            opt_config["Analysis"] = analysis_config
+            model = AMinerModel(
+                config=opt_config,
+                input_path=self.tmp_save_path,
+                tmp_dir=os.path.join(self.output_dir, "optimization"),
+                files_suffix=str(i),
+                pwd=pwd
+            )
+            model.fit_predict(df_train, df_test, print_progress=False)
+            model_results = model.get_latest_results_df(detectors)
             for id in all_ids:
-                df_id = info[info["id"]==id]
+                df_id = model_results[model_results["id"]==id]
                 fp = len(set(df_id["idx"]))
                 timedelta = (max(df_id["ts"])-min(df_id["ts"])).total_seconds().values if not df_id.empty else 0
                 seconds = float(timedelta)

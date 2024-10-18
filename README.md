@@ -18,15 +18,15 @@ git clone https://github.com/ait-aecid/aminer-configuration-engine
 1. Drop relevant files into directory [data](data). The log data has to be of a single type (e.g. audit or ApacheAccess). The given sample data in directory [data](data) is Apache Access data from [AIT Log Data Set V2.0](https://zenodo.org/records/5789064) and should be removed before dropping new files. 
 2. Execute command (from within the directory):
 ```bash
-python3 main.py [-h] [-d DATA_DIR] [-p PARSER] [-pd USE_PARSED_DATA] [-id DETECTOR_IDS] [-o OPTIMIZE] [-pre PREDEFINED_CONFIG_PATH]
+python3 create_config.py [-h] [-d DATA_DIR] [-p PARSER_NAME] [-pd USE_PARSED_DATA] [-id DETECTOR_IDS] [-o OPTIMIZE] [-pre PREDEFINED_CONFIG_PATH]
 ```
 For instance, this command will execute the Configuration-Engine with the Apache Access parser for the detectors with IDs 1, 2 and 4 with the optimization turned on.
 ```bash
-python3 main.py -d data/ -p ApacheAccessParsingModel -id 124 -o true
+python3 create_config.py -d data/ -p ApacheAccessParsingModel -id 1,2,4 -o true
 ```
 For more information:
 ```bash
-python3 main.py --help
+python3 create_config.py --help
 ```
 
 # **For Developers**

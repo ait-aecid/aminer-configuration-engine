@@ -27,17 +27,17 @@ class ConfigurationEngine(Optimization):
             optimize=True,
             predefined_config_path: Optional[str]=None,
             use_parsed_data=True,
-            tmp_save_path="/tmp/current_data.log"
+            tmp_save_path="/tmp/current_data.log",
         ):
         """Initialize project. Returns parsed command line arguments."""
         self.data_dir = data_dir
         self.parser_name = parser_name
         self.optimize = optimize
         self.predefined_config_path = predefined_config_path
-
         self.tmp_save_path = tmp_save_path
         self.detectors = [DETECTOR_ID_DICT[id] for id in detector_ids.split(",")]
         # get the data
+        print("\n------------------------- DATA EXTRACTION -------------------------")
         start = time.time()
         data = LogData(
             self.data_dir,
@@ -46,8 +46,7 @@ class ConfigurationEngine(Optimization):
         )
         self.df = data.get_df(use_parsed_data)
         self.input_filepaths = data.input_filepaths
-        print(f"Finished data extraction (runtime: {time.time() - start}).")
-        
+        print(f"Data extraction finished. (runtime: {round(time.time() - start, 3)}s)")        
         self.init_output_dir()
 
         # load base config
@@ -63,9 +62,11 @@ class ConfigurationEngine(Optimization):
 
     def configure_detectors(self, predefined_config=None, print_progress=True) -> list:
         """Configure detectors and return their configurations as dictionaries in a list."""
+        if print_progress:
+            print("\n-------------------------- CONFIGURATION --------------------------")
         start = time.time()
         df = self.df.copy()
-        detector_config = []
+        analysis_config = []
         if predefined_config == None:
             for current_detector in self.detectors:
                 if print_progress:
@@ -75,29 +76,34 @@ class ConfigurationEngine(Optimization):
                 else:
                     current_df = df
                 current_analysis = ParameterSelection(current_df, self.settings["ParameterSelection"][current_detector])
-                detector_config += assemble_detector(current_detector, current_analysis.params)
+                analysis_config += assemble_detector(current_detector, current_analysis.params)
         else:
-            detector_config = adapt_predefined_analysis_config(predefined_config["Analysis"], self.detectors, df, print_deleted=True)
+            analysis_config = adapt_predefined_analysis_config(predefined_config["Analysis"], self.detectors, df, print_deleted=True)
         # give a id if no id is given
-        for i, instance in enumerate(detector_config):
+        for i, instance in enumerate(analysis_config):
             if "persistence_id" not in instance.keys():
                 instance["persistence_id"] = f"instance_id_{i}"
-                detector_config[i] = instance
+                analysis_config[i] = instance
             if "id" not in instance.keys():
                 instance["id"] = f"instance_id_{i}"
-                detector_config[i] = instance
+                analysis_config[i] = instance
         # optimize
-        if len(detector_config) > 0 and self.optimize:
+        if print_progress:
+            print(f"Configuration finished. (runtime: {round(time.time() - start, 3)}s)")
+        start = time.time()
+        if len(analysis_config) > 0 and self.optimize:
+            if print_progress:
+                print("\n-------------------------- OPTIMIZATION ---------------------------")
             for split_type in self.settings["Optimization"].keys():
                 opt_settings = self.settings["Optimization"][split_type]
-                optimized_config = self.optimization(df, detector_config, **opt_settings)
+                optimized_config = self.optimize_config(df, analysis_config, **opt_settings)
                 if len(optimized_config) == 0:
                     print("Optimization leads to empty configuration. Original config. is used.")
                 else: 
-                    detector_config = optimized_config
-        if print_progress:
-            print(f"Configuration completed (runtime: {time.time() - start}).\n")
-        return detector_config
+                    analysis_config = optimized_config
+                if print_progress:
+                    print(f"Optimization finished. (runtime: {round(time.time() - start, 3)}s)")
+        return analysis_config
 
     def init_output_dir(self):
         """Initialize output directory."""
@@ -106,7 +112,8 @@ class ConfigurationEngine(Optimization):
         else:
             prefix = "CE"
         self.result_label = f"{prefix}_{str(len(self.df))}_samples"
-        self.output_dir = os.path.join("output", '_'.join(self.detectors), self.parser_name, self.result_label)
+        output_dir_rel = os.path.join("output", '_'.join(self.detectors), self.parser_name, self.result_label)
+        self.output_dir = os.path.abspath(output_dir_rel)
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "optimization"), exist_ok=True)
     
@@ -120,5 +127,5 @@ class ConfigurationEngine(Optimization):
         # save config
         config_path = os.path.join(self.output_dir, "config.yaml")
         dump_config(config_path, self.config)
-        print("Configuration file saved to:", config_path)
+        print("\nConfiguration file saved to:", config_path)
         return self.config
