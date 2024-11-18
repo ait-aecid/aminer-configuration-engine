@@ -1,8 +1,12 @@
-# AMiner-Configuration-Engine
+# Configuration-Engine
 
 This code allows to generate configurations for the [logdata-anomaly-miner](https://github.com/ait-aecid/logdata-anomaly-miner) (AMiner) based on static log file analysis.
 
-**Optimization is not yet working! (requires adaptations in AMiner - coming soon ...)**
+## **Publication**
+
+The paper "Semi-supervised Configuration and Optimization of Anomaly Detection Algorithms on Log Data" (link will be added after publication) documents the evaluation of the Configuration-Engine.
+
+The evaluation was done with Apache Access and audit log data from [AIT Log Data Set V1.0](https://zenodo.org/records/3723083) and [AIT Log Data Set V2.0](https://zenodo.org/records/5789064). For the individual V2.0 datasets the log files were chosen from <DATASET_NAME>/gather/intranet_server/logs/<DATA_TYPE>.
 
 ## **Installation**
 At first we have to install the [AMiner](https://github.com/ait-aecid/logdata-anomaly-miner). Follow the link for instructions.
@@ -16,7 +20,7 @@ git submodule update --init
 
 ## **Execution**
 
-1. Drop relevant files into directory [data](data). The log data has to be of a single type (e.g. audit or ApacheAccess). The given sample data in directory [data](data) is Apache Access data from [AIT Log Data Set V2.0](https://zenodo.org/records/5789064) and should be removed before dropping new files. 
+1. Drop relevant files into directory [data](data). The log data has to be of a single type (e.g. audit or Apache Access). The given sample data in directory [data](data) is Apache Access data from [AIT Log Data Set V2.0](https://zenodo.org/records/5789064) and should be removed before dropping new files. 
 2. Execute command (from within the directory):
 ```bash
 python3 create_config.py [-h] [-d DATA_DIR] [-p PARSER_NAME] [-pd USE_PARSED_DATA] [-id DETECTOR_IDS] [-o OPTIMIZE] [-pre PREDEFINED_CONFIG_PATH]
@@ -59,8 +63,3 @@ EntropyDetector:
             max: 0.9
             offset: -0.05
 ```
-
-## Add new configuration methods:
-
-TBA
-
