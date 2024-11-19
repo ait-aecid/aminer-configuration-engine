@@ -6,15 +6,16 @@ This code allows to generate configurations for the [logdata-anomaly-miner](http
 
 The paper "Semi-supervised Configuration and Optimization of Anomaly Detection Algorithms on Log Data" (link will be added after publication) documents the evaluation of the Configuration-Engine.
 
-The evaluation was done with Apache Access and audit log data from [AIT Log Data Set V1.0](https://zenodo.org/records/3723083) and [AIT Log Data Set V2.0](https://zenodo.org/records/5789064). For the individual V2.0 datasets the log files were chosen from <DATASET_NAME>/gather/intranet_server/logs/<DATA_TYPE>.
+The evaluation was done with Apache Access and audit log data from [AIT Log Data Set V1.0](https://zenodo.org/records/3723083) and [AIT Log Data Set V2.0](https://zenodo.org/records/5789064). For the individual V2.0 datasets the log files were chosen from <dataset_name>/gather/intranet_server/logs/<data_type>.
 
 ## **Installation**
-At first we have to install the [AMiner](https://github.com/ait-aecid/logdata-anomaly-miner). Follow the link for instructions.
 
-Install the AMiner-Configuration-Engine from git:
+To install the AMiner-Configuration-Engine simply run:
 ```bash
 git clone https://github.com/ait-aecid/aminer-configuration-engine
 git submodule update --init
+chmod +x setup.sh
+./setup.sh
 ```
 
 

@@ -35,6 +35,7 @@ class ConfigurationEngine(Optimization):
         self.optimize = optimize
         self.predefined_config_path = predefined_config_path
         self.tmp_save_path = tmp_save_path
+        self.detector_ids = detector_ids
         self.detectors = [DETECTOR_ID_DICT[id] for id in detector_ids.split(",")]
         # get the data
         print("\n------------------------- DATA EXTRACTION -------------------------")
@@ -112,7 +113,7 @@ class ConfigurationEngine(Optimization):
         else:
             prefix = "CE"
         self.result_label = f"{prefix}_{str(len(self.df))}_samples"
-        output_dir_rel = os.path.join("output", '_'.join(self.detectors), self.parser_name, self.result_label)
+        output_dir_rel = os.path.join("output", "ids_" + self.detector_ids.replace(",", "-"), self.parser_name, self.result_label)
         self.output_dir = os.path.abspath(output_dir_rel)
         os.makedirs(self.output_dir, exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "optimization"), exist_ok=True)
