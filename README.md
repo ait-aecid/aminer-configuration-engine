@@ -13,6 +13,7 @@ The evaluation was done with Apache Access and audit log data from [AIT Log Data
 To install the AMiner-Configuration-Engine simply run:
 ```bash
 git clone https://github.com/ait-aecid/aminer-configuration-engine
+cd aminer-configuration-engine
 git submodule update --init
 chmod +x setup.sh
 ./setup.sh

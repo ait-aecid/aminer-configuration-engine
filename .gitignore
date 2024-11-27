@@ -5,4 +5,4 @@ tools
 tool.ipynb
 notebooks
 tmp
-env
+.env

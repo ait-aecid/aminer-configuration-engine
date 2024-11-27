@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # Configuration-Engine setup:
+git submodule init
+git submodule update
+
 pip install -r requirements.txt
 
 # AMiner installation:
@@ -17,6 +20,8 @@ rm "$FILE.1" "$FILE.bak"
 echo "Updated $VAR_NAME to \"$NEW_VALUE\" in $FILE"
 
 ./aminer_install.sh
+
+rm aminer_install.sh
 
 # link AMiner parsers:
 SRC_DIR="/etc/aminer/conf-available/ait-lds"
